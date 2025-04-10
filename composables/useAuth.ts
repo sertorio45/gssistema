@@ -2,12 +2,21 @@ import type { AuthResponse, LoginCredentials, RegisterData } from '~/types/auth'
 import { defineStore } from 'pinia'
 
 export const useAuth = defineStore('auth', () => {
+  // Usamos um cookie normal (não HttpOnly) para token de autenticação
+  // Isso permite acesso tanto pelo cliente quanto pelo servidor
+  const authToken = useCookie('auth_token', {
+    maxAge: 7 * 24 * 60 * 60, // 7 dias em segundos
+    secure: import.meta.env.PROD,
+    sameSite: 'lax',
+    path: '/',
+  })
+
   const user = ref<AuthResponse['user'] | null>(null)
-  const token = ref<string | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const isAuthenticated = computed(() => !!token.value)
+  // Estado de autenticação baseado no token no cookie
+  const isAuthenticated = computed(() => !!authToken.value)
 
   async function login(credentials: LoginCredentials) {
     try {
@@ -19,11 +28,9 @@ export const useAuth = defineStore('auth', () => {
         body: credentials,
       })
 
+      // Armazena o token no cookie
+      authToken.value = response.token
       user.value = response.user
-      token.value = response.token
-
-      // Armazena o token no localStorage
-      localStorage.setItem('auth_token', response.token)
 
       // Redireciona para a home
       navigateTo('/')
@@ -47,11 +54,9 @@ export const useAuth = defineStore('auth', () => {
         body: data,
       })
 
+      // Armazena o token no cookie
+      authToken.value = response.token
       user.value = response.user
-      token.value = response.token
-
-      // Armazena o token no localStorage
-      localStorage.setItem('auth_token', response.token)
 
       // Redireciona para a home
       navigateTo('/')
@@ -66,35 +71,45 @@ export const useAuth = defineStore('auth', () => {
   }
 
   function logout() {
+    // Limpa os dados locais
+    authToken.value = null
     user.value = null
-    token.value = null
-    localStorage.removeItem('auth_token')
+
+    // Redireciona para a página de login
     navigateTo('/login')
   }
 
-  // Inicializa o estado de autenticação
-  onMounted(async () => {
-    const savedToken = localStorage.getItem('auth_token')
-    if (savedToken) {
-      token.value = savedToken
+  // Carrega os dados do usuário quando houver um token
+  const fetchUserData = async () => {
+    if (authToken.value && !user.value) {
       try {
+        loading.value = true
         // Carrega os dados do usuário
         const userData = await $fetch<AuthResponse['user']>('/api/auth/me', {
           headers: {
-            Authorization: `Bearer ${savedToken}`,
+            Authorization: `Bearer ${authToken.value}`,
           },
         })
         user.value = userData
       }
-      catch {
+      catch (e) {
+        // Em caso de erro com o token, faz logout
+        console.warn('Erro ao carregar dados do usuário:', e)
         logout()
       }
+      finally {
+        loading.value = false
+      }
     }
-  })
+  }
 
+  // Carrega dados do usuário na montagem do componente
+  onMounted(fetchUserData)
+
+  // Retorna os métodos e propriedades que queremos expor
   return {
     user,
-    token,
+    token: authToken,
     loading,
     error,
     isAuthenticated,

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { getJwtSecret } from '../utils/jwt'
 import prisma from '../utils/prisma'
 
 export default defineEventHandler(async (event) => {
@@ -11,25 +12,56 @@ export default defineEventHandler(async (event) => {
   const publicRoutes = [
     '/api/auth/login',
     '/api/auth/register',
-    '/api/auth/forgot-password'
+    '/api/auth/forgot-password',
   ]
-  
+
   // Ignora rotas públicas
   if (publicRoutes.includes(event.path)) {
     return
   }
 
-  const token = event.headers.get('authorization')?.replace('Bearer ', '')
+  // Obtém o token do cabeçalho Authorization
+  const authHeader = event.headers.get('authorization')
+  const token = authHeader?.replace('Bearer ', '')
 
+  // Se não houver token, verifica se existe no cookie
   if (!token) {
-    return createError({
-      statusCode: 401,
-      message: 'Token não fornecido',
-    })
+    // Tenta obter o token dos cookies
+    const authCookie = getCookie(event, 'auth_token')
+
+    if (!authCookie) {
+      return createError({
+        statusCode: 401,
+        message: 'Token não fornecido',
+      })
+    }
+
+    // Usa o token do cookie
+    await verifyAndSetUser(event, authCookie)
+    return
   }
 
+  // Se tiver token no cabeçalho, verifica e define o usuário
+  await verifyAndSetUser(event, token)
+})
+
+/**
+ * Função auxiliar para verificar o token e definir o usuário no contexto
+ * @param event Evento Nitro da requisição
+ * @param token Token JWT a ser verificado
+ */
+async function verifyAndSetUser(
+  event: any,
+  token: string,
+): Promise<void | ReturnType<typeof createError>> {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { userId: string }
+    // Obtém o JWT_SECRET do ambiente através do utilitário
+    const jwtSecret = getJwtSecret()
+
+    // Verifica o token
+    const decoded = jwt.verify(token, jwtSecret) as { userId: string }
+
+    // Busca o usuário no banco de dados
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
     })
@@ -41,12 +73,13 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // @ts-ignore
+    // Adiciona o usuário ao contexto
     event.context.user = user
-  } catch (error) {
+  }
+  catch {
     return createError({
       statusCode: 401,
-      message: 'Token inválido',
+      message: 'Token inválido ou expirado',
     })
   }
-}) 
+}

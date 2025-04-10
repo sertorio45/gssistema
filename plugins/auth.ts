@@ -1,21 +1,24 @@
-import type { $Fetch } from 'nitropack'
-
 export default defineNuxtPlugin(() => {
   const auth = useAuth()
 
   addRouteMiddleware('global-auth', (to) => {
-    const { isAuthenticated } = useAuth()
-
     // Lista de rotas públicas que não precisam de autenticação
-    const publicPaths = ['/login', '/register', '/esqueci-senha', '/(auth)']
+    const publicPaths = ['/login', '/register', '/esqueci-senha', '/(auth)', '/forgot-password']
 
     // Verificar se a rota atual começa com algum dos caminhos públicos
     const isPublicRoute = publicPaths.some(path => to.path.startsWith(path))
 
     // Se não for uma rota pública e o usuário não estiver autenticado
-    if (!isPublicRoute && !isAuthenticated) {
+    if (!isPublicRoute && !auth.isAuthenticated) {
+      console.warn('Redirecionando para login: rota protegida e não autenticado')
       // Redirecionar para a página de login
       return navigateTo('/login')
+    }
+
+    // Se for uma rota pública e o usuário estiver autenticado, redirecionar para a home
+    if (isPublicRoute && auth.isAuthenticated) {
+      console.warn('Redirecionando para home: rota pública e autenticado')
+      return navigateTo('/')
     }
   }, { global: true })
 
@@ -38,4 +41,4 @@ export default defineNuxtPlugin(() => {
       },
     },
   }
-}) 
+})
