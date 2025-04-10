@@ -1,5 +1,5 @@
+import type { AuthResponse, LoginCredentials, RegisterData } from '~/types/auth'
 import { defineStore } from 'pinia'
-import type { LoginCredentials, RegisterData, AuthResponse } from '~/types/auth'
 
 export const useAuth = defineStore('auth', () => {
   const user = ref<AuthResponse['user'] | null>(null)
@@ -8,13 +8,12 @@ export const useAuth = defineStore('auth', () => {
   const error = ref<string | null>(null)
 
   const isAuthenticated = computed(() => !!token.value)
-  const { $authFetch } = useNuxtApp()
 
   async function login(credentials: LoginCredentials) {
     try {
       loading.value = true
       error.value = null
-      
+
       const response = await $fetch<AuthResponse>('/api/auth/login', {
         method: 'POST',
         body: credentials,
@@ -22,16 +21,18 @@ export const useAuth = defineStore('auth', () => {
 
       user.value = response.user
       token.value = response.token
-      
+
       // Armazena o token no localStorage
       localStorage.setItem('auth_token', response.token)
-      
+
       // Redireciona para a home
       navigateTo('/')
-    } catch (e: any) {
+    }
+    catch (e: any) {
       error.value = e.data?.message || 'Erro ao fazer login'
       throw error.value
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -40,7 +41,7 @@ export const useAuth = defineStore('auth', () => {
     try {
       loading.value = true
       error.value = null
-      
+
       const response = await $fetch<AuthResponse>('/api/auth/register', {
         method: 'POST',
         body: data,
@@ -48,16 +49,18 @@ export const useAuth = defineStore('auth', () => {
 
       user.value = response.user
       token.value = response.token
-      
+
       // Armazena o token no localStorage
       localStorage.setItem('auth_token', response.token)
-      
+
       // Redireciona para a home
       navigateTo('/')
-    } catch (e: any) {
+    }
+    catch (e: any) {
       error.value = e.data?.message || 'Erro ao criar conta'
       throw error.value
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -78,11 +81,12 @@ export const useAuth = defineStore('auth', () => {
         // Carrega os dados do usuário
         const userData = await $fetch<AuthResponse['user']>('/api/auth/me', {
           headers: {
-            Authorization: `Bearer ${savedToken}`
-          }
+            Authorization: `Bearer ${savedToken}`,
+          },
         })
         user.value = userData
-      } catch {
+      }
+      catch {
         logout()
       }
     }
@@ -98,4 +102,4 @@ export const useAuth = defineStore('auth', () => {
     register,
     logout,
   }
-}) 
+})

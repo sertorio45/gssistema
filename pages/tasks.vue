@@ -2,6 +2,10 @@
 import { columns } from '@/components/tasks/components/columns'
 import DataTable from '@/components/tasks/components/DataTable.vue'
 import tasks from '@/components/tasks/data/tasks.json'
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>
 
 <template>
