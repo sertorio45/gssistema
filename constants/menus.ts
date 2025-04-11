@@ -23,6 +23,22 @@ export const navMenu: NavMenu[] = [
     ],
   },
   {
+    heading: '',
+    items: [
+      {
+        title: 'Administration',
+        icon: 'i-lucide-briefcase',
+        children: [
+          {
+            title: 'Users',
+            icon: 'i-lucide-users',
+            link: '/admin/users',
+          },
+        ],
+      },
+    ],
+  },
+  {
     heading: 'Pages',
     items: [
       {
@@ -83,7 +99,7 @@ export const navMenu: NavMenu[] = [
         ],
       },
       {
-        title: 'Settings',
+        title: 'Account Settings',
         icon: 'i-lucide-settings',
         new: true,
         children: [
