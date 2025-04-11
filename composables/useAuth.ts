@@ -92,14 +92,95 @@ export const useAuth = defineStore('auth', () => {
         })
         user.value = userData
       }
-      catch (e) {
-        // Em caso de erro com o token, faz logout
+      catch (e: any) {
+        // Em caso de erro, apenas loga o erro mas NÃO faz logout
         console.warn('Erro ao carregar dados do usuário:', e)
-        logout()
+        error.value = 'Erro ao carregar perfil, tente fazer login novamente.'
+        // Caso o erro seja de autenticação, limpa o token mas não redireciona
+        if (e.response?.status === 401) {
+          authToken.value = null
+        }
       }
       finally {
         loading.value = false
       }
+    }
+  }
+
+  // Função para recarregar explicitamente os dados do usuário
+  const refreshUserData = async () => {
+    if (authToken.value) {
+      try {
+        loading.value = true
+        // Carrega os dados do usuário com parâmetro para evitar cache
+        const userData = await $fetch<AuthResponse['user']>('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${authToken.value}`,
+          },
+          query: {
+            _t: Date.now(), // Adiciona timestamp para evitar cache
+          },
+        })
+        
+        // Atualiza os dados do usuário no estado
+        user.value = userData
+        
+        // Dispara evento para notificar os componentes sobre a atualização
+        if (import.meta.client) {
+          window.dispatchEvent(new Event('user-updated'))
+        }
+      }
+      catch (e: any) {
+        // Em caso de erro, apenas loga o erro mas NÃO faz logout
+        console.warn('Erro ao recarregar dados do usuário:', e)
+        // Não chamar logout() aqui para evitar deslogamento automático
+        error.value = 'Erro ao atualizar perfil, tente novamente.'
+      }
+      finally {
+        loading.value = false
+      }
+    }
+  }
+
+  // Função utilitária para atualizar a UI sem recarregar dados
+  const syncUserData = () => {
+    // Dispara evento para atualizar componentes sem fazer requisição
+    if (import.meta.client) {
+      window.dispatchEvent(new Event('user-updated'))
+    }
+  }
+
+  // Função para atualizar o perfil do usuário
+  const updateProfile = async (userId: string, profileData: any) => {
+    try {
+      loading.value = true
+      error.value = null
+
+      // Atualiza o perfil chamando a API
+      const updatedUser = await $fetch<AuthResponse['user']>(`/api/users/${userId}`, {
+        method: 'PATCH',
+        body: profileData,
+        headers: {
+          Authorization: `Bearer ${authToken.value}`,
+        },
+      })
+
+      // Atualiza os dados do usuário no estado
+      user.value = updatedUser
+
+      // Notifica os componentes sobre a atualização
+      if (import.meta.client) {
+        window.dispatchEvent(new Event('user-updated'))
+      }
+
+      return updatedUser
+    }
+    catch (e: any) {
+      error.value = e.data?.message || 'Erro ao atualizar perfil'
+      throw error.value
+    }
+    finally {
+      loading.value = false
     }
   }
 
@@ -116,5 +197,9 @@ export const useAuth = defineStore('auth', () => {
     login,
     register,
     logout,
+    fetchUserData,
+    refreshUserData,
+    updateProfile,
+    syncUserData,
   }
 })

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { onMounted, watch } from 'vue'
 import { useSidebar } from '~/components/ui/sidebar'
+import { useAuth } from '~/composables/useAuth'
 
 defineProps<{
   user: {
@@ -10,12 +12,30 @@ defineProps<{
 }>()
 
 const { isMobile, setOpenMobile } = useSidebar()
+const auth = useAuth()
+const showModalTheme = ref(false)
 
 function handleLogout() {
-  navigateTo('/login')
+  auth.logout()
 }
 
-const showModalTheme = ref(false)
+// Certificar-se de que os dados do usuário estão carregados
+onMounted(() => {
+  // Carregamento controlado para evitar flickering
+  if (!auth.user) {
+    setTimeout(() => {
+      auth.refreshUserData()
+    }, 100)
+  }
+})
+
+// Atualiza os dados quando o usuário mudar
+if (import.meta.client) {
+  window.addEventListener('user-updated', () => {
+    // Força recarregar dados do usuário
+    auth.refreshUserData()
+  })
+}
 </script>
 
 <template>
@@ -27,12 +47,14 @@ const showModalTheme = ref(false)
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
-            <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
-              <AvatarFallback class="rounded-lg">
-                {{ user.name.split(' ').map((n) => n[0]).join('') }}
-              </AvatarFallback>
-            </Avatar>
+            <div class="relative">
+              <Avatar class="h-8 w-8 rounded-full">
+                <AvatarImage :src="user.avatar" :alt="user.name" />
+                <AvatarFallback class="rounded-full">
+                  {{ user.name.split(' ').map((n) => n[0]).join('') }}
+                </AvatarFallback>
+              </Avatar>
+            </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">{{ user.name }}</span>
               <span class="truncate text-xs">{{ user.email }}</span>
@@ -47,25 +69,20 @@ const showModalTheme = ref(false)
         >
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
-                <AvatarFallback class="rounded-lg">
-                  {{ user.name.split(' ').map((n) => n[0]).join('') }}
-                </AvatarFallback>
-              </Avatar>
+              <div class="relative">
+                <Avatar class="h-8 w-8 rounded-full">
+                  <AvatarImage :src="user.avatar" :alt="user.name" />
+                  <AvatarFallback class="rounded-full">
+                    {{ user.name.split(' ').map((n) => n[0]).join('') }}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ user.name }}</span>
                 <span class="truncate text-xs">{{ user.email }}</span>
               </div>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Icon name="i-lucide-sparkles" />
-              Upgrade to Pro
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
@@ -83,15 +100,11 @@ const showModalTheme = ref(false)
               Notifications
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem as-child>
-              <NuxtLink to="https://github.com/dianprata/nuxt-shadcn-dashboard" external target="_blank">
-                <Icon name="i-lucide-github" />
-                Github Repository
+            <DropdownMenuItem>
+              <NuxtLink @click="showModalTheme = true" external target="_blank">
+                <Icon name="i-lucide-paintbrush" />
+                Theme
               </NuxtLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem @click="showModalTheme = true">
-              <Icon name="i-lucide-paintbrush" />
-              Theme
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

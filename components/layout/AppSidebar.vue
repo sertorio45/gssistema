@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NavGroup, NavLink, NavSectionTitle } from '~/types/nav'
+import { useAuth } from '~/composables/useAuth'
 import { navMenu, navMenuBottom } from '~/constants/menus'
 
 function resolveNavItemComponent(item: NavLink | NavGroup | NavSectionTitle): any {
@@ -31,15 +32,62 @@ const teams: {
   },
 ]
 
-const user: {
-  name: string
-  email: string
-  avatar: string
-} = {
-  name: 'Dian Pratama',
-  email: 'dianpratama2@gmail.com',
-  avatar: '/avatars/avatartion.png',
+// Use o store de autenticação
+const auth = useAuth()
+
+// Estado inicial do usuário
+const user = ref({
+  name: '',
+  email: '',
+  avatar: '/avatars/avatartion.png', // Avatar padrão
+})
+
+// Watch para atualizar os dados do usuário quando o store auth for atualizado
+watch(() => auth.user, (newUser) => {
+  if (newUser) {
+    // Atualiza os dados exibidos na sidebar imediatamente
+    user.value = {
+      name: newUser.name || 'Usuário',
+      email: newUser.email || 'usuario@exemplo.com',
+      avatar: newUser.avatar || '/avatars/avatartion.png',
+    }
+  }
+}, { immediate: true, deep: true })
+
+// Adiciona listener para evento customizado de atualização
+if (import.meta.client) {
+  window.addEventListener('user-updated', () => {
+    // Atualiza apenas os dados locais do usuário sem fazer nova requisição
+    if (auth.user) {
+      user.value = {
+        name: auth.user.name || 'Usuário',
+        email: auth.user.email || 'usuario@exemplo.com',
+        avatar: auth.user.avatar || '/avatars/avatartion.png',
+      }
+    }
+  })
 }
+
+// Função para recarregar dados do usuário
+async function refreshUser() {
+  // Evita fazer muitas requisições seguidas
+  if (auth.loading) {
+    return
+  }
+
+  try {
+    await auth.refreshUserData()
+  } 
+  catch (error) {
+    console.error('Erro ao carregar dados do usuário:', error)
+    // Não bloqueia a execução em caso de erro
+  }
+}
+
+// Carregar dados do usuário ao montar o componente e a cada 3 minutos
+onMounted(() => {
+  refreshUser()
+})
 
 const { sidebar } = useAppSettings()
 </script>
@@ -71,3 +119,4 @@ const { sidebar } = useAppSettings()
 <style scoped>
 
 </style>
+
