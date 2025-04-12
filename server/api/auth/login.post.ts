@@ -62,7 +62,9 @@ export default defineEventHandler(async (event) => {
     } as AuthResponse
   }
   // Usamos a sintaxe de "erro anônimo" para evitar alerta de variável não utilizada
-  catch {
+  catch (error) {
+    // Adiciona log do erro para debug
+    console.error('Erro no login:', error)
     // O erro específico não é usado, mas poderia ser logado em um sistema de monitoramento
     return createError({
       statusCode: 500,

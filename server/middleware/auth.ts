@@ -2,6 +2,25 @@ import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '../utils/jwt'
 import prisma from '../utils/prisma'
 
+// Mapeamento de rotas e permissões
+const routePermissions: Record<string, string[]> = {
+  // Rotas administrativas - apenas admin
+  '/admin': ['admin'],
+  '/admin/users': ['admin'],
+  '/admin/settings': ['admin'],
+  
+  // Rotas para funcionários - admin e funcionário podem acessar
+  '/dashboard': ['admin', 'funcionario'],
+  '/reports': ['admin', 'funcionario'],
+  '/tasks': ['admin', 'funcionario'],
+  '/financeiro': ['admin', 'funcionario'], // Adicione aqui a sua nova rota
+  
+  // Rotas para clientes - todos podem acessar
+  '/profile': ['admin', 'funcionario', 'cliente'],
+  '/orders': ['admin', 'funcionario', 'cliente'],
+  '/account': ['admin', 'funcionario', 'cliente'],
+}
+
 export default defineEventHandler(async (event) => {
   // Ignora rotas que não são da API
   if (!event.path.startsWith('/api/')) {

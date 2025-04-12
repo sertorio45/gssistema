@@ -1,3 +1,5 @@
+<!-- componente para o header da sidebar -->
+
 <script setup lang="ts">
 import { useSidebar } from '~/components/ui/sidebar'
 
