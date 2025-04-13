@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NavGroup, NavLink, NavSectionTitle } from '~/types/nav'
 import { useAuth } from '~/composables/useAuth'
-import { navMenu, navMenuBottom } from '~/constants/menus'
+import { filterMenuByRole, navMenu, navMenuBottom } from '~/constants/menus'
 
 function resolveNavItemComponent(item: NavLink | NavGroup | NavSectionTitle): any {
   if ('children' in item)
@@ -40,6 +40,15 @@ const user = ref({
   name: '',
   email: '',
   avatar: '/avatars/avatartion.png', // Avatar padrão
+  role: '',
+})
+
+// Filtra o menu baseado na role do usuário
+const filteredMenu = computed(() => {
+  if (!auth.user || !auth.user.role) {
+    return []
+  }
+  return filterMenuByRole(navMenu, auth.user.role)
 })
 
 // Watch para atualizar os dados do usuário quando o store auth for atualizado
@@ -50,6 +59,7 @@ watch(() => auth.user, (newUser) => {
       name: newUser.name || 'Usuário',
       email: newUser.email || 'usuario@exemplo.com',
       avatar: newUser.avatar || '/avatars/avatartion.png',
+      role: newUser.role || '',
     }
   }
 }, { immediate: true, deep: true })
@@ -63,6 +73,7 @@ if (import.meta.client) {
         name: auth.user.name || 'Usuário',
         email: auth.user.email || 'usuario@exemplo.com',
         avatar: auth.user.avatar || '/avatars/avatartion.png',
+        role: auth.user.role || '',
       }
     }
   })
@@ -99,7 +110,7 @@ const { sidebar } = useAppSettings()
       <Search />
     </SidebarHeader>
     <SidebarContent>
-      <SidebarGroup v-for="(nav, indexGroup) in navMenu" :key="indexGroup">
+      <SidebarGroup v-for="(nav, indexGroup) in filteredMenu" :key="indexGroup">
         <SidebarGroupLabel v-if="nav.heading">
           {{ nav.heading }}
         </SidebarGroupLabel>

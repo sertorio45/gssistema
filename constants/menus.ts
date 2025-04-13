@@ -1,3 +1,4 @@
+import type { UserRole } from '~/types/auth'
 import type { NavMenu, NavMenuItems } from '~/types/nav'
 
 export const navMenu: NavMenu[] = [
@@ -13,12 +14,14 @@ export const navMenu: NavMenu[] = [
         title: 'Email',
         icon: 'i-lucide-mail',
         link: '/email',
+        requiredRoles: ['admin', 'funcionario'],
       },
       {
         title: 'Tasks',
         icon: 'i-lucide-calendar-check-2',
         link: '/tasks',
         new: true,
+        requiredRoles: ['admin', 'funcionario'],
       },
     ],
   },
@@ -28,11 +31,13 @@ export const navMenu: NavMenu[] = [
       {
         title: 'Administration',
         icon: 'i-lucide-briefcase',
+        requiredRoles: ['admin'],
         children: [
           {
             title: 'Users',
             icon: 'i-lucide-users',
             link: '/admin/users',
+            requiredRoles: ['admin'],
           },
         ],
       },
@@ -408,3 +413,68 @@ export const navMenuBottom: NavMenuItems = [
     link: 'https://github.com/dianprata/nuxt-shadcn-dashboard',
   },
 ]
+
+// Função para filtrar os menus de acordo com a role do usuário
+export function filterMenuByRole(menus: NavMenu[], role?: UserRole): NavMenu[] {
+  if (!role) {
+    return []
+  }
+
+  // Normaliza a role para lowercase para comparações case-insensitive
+  const normalizedRole = typeof role === 'string' ? role.toLowerCase() : String(role).toLowerCase()
+
+  return menus
+    .map((menuSection) => {
+      // Primeiro filtra os itens do menu com base na role
+      const filteredItems = menuSection.items.filter((item) => {
+        // Se for um item com link direto
+        if ('link' in item) {
+          // Se não tem restrição, permite acesso
+          if (!item.requiredRoles) {
+            return true
+          }
+          // Se tem restrição, verifica se a role do usuário está na lista (case insensitive)
+          return item.requiredRoles.some(r => r.toLowerCase() === normalizedRole)
+        }
+        
+        // Se for um grupo com filhos (como Administration)
+        if ('children' in item) {
+          // Se o grupo tem restrição e o usuário não tem acesso, remove o grupo inteiro
+          if (item.requiredRoles && 
+              !item.requiredRoles.some(r => r.toLowerCase() === normalizedRole)) {
+            return false
+          }
+          
+          // Filtra os filhos do grupo
+          const filteredChildren = item.children.filter((child) => 
+            !child.requiredRoles || 
+            child.requiredRoles.some(r => r.toLowerCase() === normalizedRole)
+          )
+          
+          // Se não sobrar nenhum filho, não inclui o grupo
+          if (filteredChildren.length === 0) {
+            return false
+          }
+          
+          // Modifica a cópia do item com os filhos filtrados
+          item = { ...item, children: filteredChildren }
+          return true
+        }
+        
+        // Títulos de seção são sempre incluídos
+        return true
+      })
+      
+      // Se não houver itens após filtragem, pula esta seção
+      if (filteredItems.length === 0) {
+        return undefined
+      }
+      
+      // Retorna a seção com os itens filtrados
+      return {
+        ...menuSection,
+        items: filteredItems,
+      }
+    })
+    .filter((section): section is NavMenu => !!section) // Remove seções undefined
+}

@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { accounts, mails } from '@/components/mail/data/mails'
+
+// Definição de que esta rota requer a role "admin" ou "funcionario"
+definePageMeta({
+  middleware: ['auth'],
+  requiredRoles: ['admin', 'funcionario'],
+})
 </script>
 
 <template>

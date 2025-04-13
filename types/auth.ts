@@ -7,6 +7,8 @@ export interface RegisterData extends LoginCredentials {
   name: string
 }
 
+export type UserRole = 'admin' | 'funcionario' | 'cliente'
+
 export interface AuthResponse {
   user: {
     id: string
@@ -14,6 +16,7 @@ export interface AuthResponse {
     email: string
     avatar?: string | null
     bio?: string | null
+    role: UserRole
   }
   token: string
 }

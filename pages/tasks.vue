@@ -4,7 +4,8 @@ import DataTable from '@/components/tasks/components/DataTable.vue'
 import tasks from '@/components/tasks/data/tasks.json'
 
 definePageMeta({
-  middleware: ['auth']
+  middleware: ['auth'],
+  requiredRoles: ['admin', 'funcionario'],
 })
 </script>
 

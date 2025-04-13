@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { useToast } from '~/components/ui/toast'
 
+definePageMeta({
+  middleware: ['auth'],
+  requiredRoles: ['admin'],
+})
+
 // Definindo interface para o usuário
 interface User {
   id: string
