@@ -10,6 +10,7 @@ export default defineEventHandler(async () => {
         avatar: true,
         bio: true,
         status: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -9,6 +9,7 @@ interface User {
   bio: string | null
   avatar: string | null
   status: number
+  role: string
   createdAt: string
   updatedAt: string
 }
@@ -21,6 +22,7 @@ interface UserForm {
   bio: string
   avatar: string
   status: number
+  role: string
 }
 
 // Interface para validação de senha
@@ -60,6 +62,7 @@ const form = ref({
   bio: '',
   avatar: '',
   status: 1,
+  role: 'cliente',
 })
 
 // Reset do formulário
@@ -71,6 +74,7 @@ function resetForm() {
     bio: '',
     avatar: '',
     status: 1,
+    role: 'cliente',
   }
   avatarPreview.value = null
   validatePassword(form.value.password)
@@ -271,6 +275,33 @@ async function createUser() {
   }
 }
 
+// Função para obter ícone e cor baseado na role
+function getRoleIcon(role: string): { icon: string; color: string; badge: string; label: string } {
+  switch (role) {
+    case 'admin':
+      return { 
+        icon: 'lucide:shield', 
+        color: 'text-purple-600', 
+        badge: 'bg-purple-100 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/60',
+        label: 'Administrador' 
+      };
+    case 'funcionario':
+      return { 
+        icon: 'lucide:briefcase', 
+        color: 'text-blue-600', 
+        badge: 'bg-blue-100 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/60',
+        label: 'Funcionário' 
+      };
+    default:
+      return { 
+        icon: 'lucide:user', 
+        color: 'text-green-600', 
+        badge: 'bg-green-100 dark:bg-green-950/30 border-green-200 dark:border-green-800/60',
+        label: 'Cliente' 
+      };
+  }
+}
+
 // Abrir edição de usuário
 function openEditDialog(user: User) {
   selectedUser.value = user
@@ -281,6 +312,7 @@ function openEditDialog(user: User) {
     bio: user.bio || '',
     avatar: user.avatar || '',
     status: user.status,
+    role: user.role,
   }
   // Salvar estado original para comparação
   originalFormState.value = { ...form.value }
@@ -304,6 +336,7 @@ function hasFormChanges(): boolean {
     form.value.bio !== originalFormState.value.bio ||
     form.value.status !== originalFormState.value.status ||
     form.value.avatar !== originalFormState.value.avatar ||
+    form.value.role !== originalFormState.value.role ||
     form.value.password.length > 0
 }
 
@@ -321,6 +354,7 @@ async function updateUser() {
       bio: form.value.bio || null,
       avatar: form.value.avatar || null,
       status: form.value.status === 1 ? 1 : 0, // Garantir que seja sempre 1 ou 0
+      role: form.value.role,
     }
 
     // Adicionar senha apenas se fornecida
@@ -477,22 +511,27 @@ onMounted(() => {
   <div class="p-6">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold">Gerenciamento de Usuários</h1>
-      <Button @click="isCreateDialogOpen = true; resetForm()">
+      <Button @click="isCreateDialogOpen = true; resetForm()" class="bg-primary hover:bg-primary/90">
         <Icon name="lucide:plus-circle" class="mr-2 h-4 w-4" />
         Novo Usuário
       </Button>
     </div>
     
     <!-- Tabela de usuários -->
-    <Card>
+    <Card class="border shadow-sm">
+      <CardHeader class="pb-0">
+        <CardTitle class="text-xl">Usuários</CardTitle>
+        <CardDescription>Visualize e gerencie todos os usuários do sistema</CardDescription>
+      </CardHeader>
       <CardContent class="p-0">
         <Table>
-          <TableHeader>
+          <TableHeader class="bg-muted/50">
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Data de Criação</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Função</TableHead>
               <TableHead class="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -503,6 +542,7 @@ onMounted(() => {
                 <TableCell><Skeleton class="h-5 w-[180px]" /></TableCell>
                 <TableCell><Skeleton class="h-5 w-[150px]" /></TableCell>
                 <TableCell><Skeleton class="h-5 w-[80px]" /></TableCell>
+                <TableCell><Skeleton class="h-5 w-[100px]" /></TableCell>
                 <TableCell class="text-right">
                   <div class="flex justify-end gap-2">
                     <Skeleton class="h-8 w-8 rounded" />
@@ -512,39 +552,56 @@ onMounted(() => {
               </TableRow>
             </template>
             <TableRow v-else-if="users.length === 0">
-              <TableCell colspan="5" class="h-24 text-center">
-                Nenhum usuário encontrado.
+              <TableCell colspan="6" class="h-24 text-center">
+                <div class="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                  <Icon name="lucide:users-x" class="h-8 w-8" />
+                  <p>Nenhum usuário encontrado.</p>
+                </div>
               </TableCell>
             </TableRow>
             <template v-else>
-              <TableRow v-for="user in users" :key="user.id">
+              <TableRow v-for="user in users" :key="user.id" class="hover:bg-muted/30 transition-colors">
                 <TableCell>
                   <div class="flex items-center gap-2">
-                    <Avatar :size="'sm'" :shape="'circle'">
+                    <Avatar size="sm" shape="circle" class="border-2 border-muted">
                       <AvatarImage v-if="user.avatar" :src="user.avatar" />
-                      <AvatarFallback>
+                      <AvatarFallback class="bg-primary/10 text-primary">
                         {{ user.name.charAt(0).toUpperCase() }}
                       </AvatarFallback>
                     </Avatar>
-                    {{ user.name }}
+                    <div class="font-medium">{{ user.name }}</div>
                   </div>
                 </TableCell>
-                <TableCell>{{ user.email }}</TableCell>
-                <TableCell>{{ formatDate(user.createdAt) }}</TableCell>
+                <TableCell class="text-muted-foreground">{{ user.email }}</TableCell>
+                <TableCell class="text-muted-foreground text-sm">{{ formatDate(user.createdAt) }}</TableCell>
                 <TableCell>
-                  <Switch
-                    :checked="user.status === 1"
-                    @update:checked="toggleUserStatus(user)"
-                    class="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
-                  />
+                  <div class="flex items-center gap-2">
+                    <Switch
+                      :checked="user.status === 1"
+                      @update:checked="toggleUserStatus(user)"
+                      class="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
+                    />
+                    <span class="text-xs font-medium" :class="user.status === 1 ? 'text-green-600' : 'text-red-600'">
+                      {{ user.status === 1 ? 'Ativo' : 'Inativo' }}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div class="inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-medium"
+                    :class="[getRoleIcon(user.role).badge, getRoleIcon(user.role).color]">
+                    <Icon :name="getRoleIcon(user.role).icon" class="h-3.5 w-3.5 mr-1" />
+                    {{ getRoleIcon(user.role).label }}
+                  </div>
                 </TableCell>
                 <TableCell class="text-right">
                   <div class="flex justify-end gap-2">
-                    <Button variant="outline" size="icon" @click="openEditDialog(user)">
+                    <Button variant="ghost" size="icon" @click="openEditDialog(user)" 
+                      class="h-8 w-8 text-muted-foreground hover:text-primary">
                       <Icon name="lucide:pencil" class="h-4 w-4" />
                       <span class="sr-only">Editar</span>
                     </Button>
-                    <Button variant="outline" size="icon" @click="openDeleteAlert(user)">
+                    <Button variant="ghost" size="icon" @click="openDeleteAlert(user)" 
+                      class="h-8 w-8 text-muted-foreground hover:text-destructive">
                       <Icon name="lucide:trash-2" class="h-4 w-4" />
                       <span class="sr-only">Excluir</span>
                     </Button>
@@ -626,6 +683,46 @@ onMounted(() => {
                     <div class="w-2 h-2 rounded-full bg-red-500"></div>
                     Inativo
                   </div>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Role do usuário -->
+            <div class="w-full mt-4">
+              <div class="text-sm font-medium mb-3 text-muted-foreground">FUNÇÃO</div>
+              <div class="w-full border rounded-md overflow-hidden grid grid-cols-1 gap-1 p-1">
+                <button 
+                  type="button"
+                  class="py-2 px-4 text-sm font-medium transition-colors rounded flex items-center gap-2"
+                  :class="form.role === 'admin' 
+                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' 
+                    : 'bg-background hover:bg-muted/30'"
+                  @click="form.role = 'admin'"
+                >
+                  <Icon name="lucide:shield" class="h-4 w-4" />
+                  Administrador
+                </button>
+                <button 
+                  type="button"
+                  class="py-2 px-4 text-sm font-medium transition-colors rounded flex items-center gap-2"
+                  :class="form.role === 'funcionario' 
+                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' 
+                    : 'bg-background hover:bg-muted/30'"
+                  @click="form.role = 'funcionario'"
+                >
+                  <Icon name="lucide:briefcase" class="h-4 w-4" />
+                  Funcionário
+                </button>
+                <button 
+                  type="button"
+                  class="py-2 px-4 text-sm font-medium transition-colors rounded flex items-center gap-2"
+                  :class="form.role === 'cliente' 
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' 
+                    : 'bg-background hover:bg-muted/30'"
+                  @click="form.role = 'cliente'"
+                >
+                  <Icon name="lucide:user" class="h-4 w-4" />
+                  Cliente
                 </button>
               </div>
             </div>
@@ -794,6 +891,46 @@ onMounted(() => {
                     <div class="w-2 h-2 rounded-full bg-red-500"></div>
                     Inativo
                   </div>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Role do usuário -->
+            <div class="w-full mt-4">
+              <div class="text-sm font-medium mb-3 text-muted-foreground">FUNÇÃO</div>
+              <div class="w-full border rounded-md overflow-hidden grid grid-cols-1 gap-1 p-1">
+                <button 
+                  type="button"
+                  class="py-2 px-4 text-sm font-medium transition-colors rounded flex items-center gap-2"
+                  :class="form.role === 'admin' 
+                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' 
+                    : 'bg-background hover:bg-muted/30'"
+                  @click="form.role = 'admin'"
+                >
+                  <Icon name="lucide:shield" class="h-4 w-4" />
+                  Administrador
+                </button>
+                <button 
+                  type="button"
+                  class="py-2 px-4 text-sm font-medium transition-colors rounded flex items-center gap-2"
+                  :class="form.role === 'funcionario' 
+                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' 
+                    : 'bg-background hover:bg-muted/30'"
+                  @click="form.role = 'funcionario'"
+                >
+                  <Icon name="lucide:briefcase" class="h-4 w-4" />
+                  Funcionário
+                </button>
+                <button 
+                  type="button"
+                  class="py-2 px-4 text-sm font-medium transition-colors rounded flex items-center gap-2"
+                  :class="form.role === 'cliente' 
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' 
+                    : 'bg-background hover:bg-muted/30'"
+                  @click="form.role = 'cliente'"
+                >
+                  <Icon name="lucide:user" class="h-4 w-4" />
+                  Cliente
                 </button>
               </div>
             </div>

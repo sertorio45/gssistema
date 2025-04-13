@@ -39,6 +39,10 @@ export default defineEventHandler(async (event) => {
     // Hash da senha
     const hashedPassword = await hash(body.password, 10)
 
+    // Validar a role
+    const allowedRoles = ['admin', 'funcionario', 'cliente']
+    const role = body.role && allowedRoles.includes(body.role) ? body.role : 'cliente'
+
     // Criar o usuário
     const user = await prisma.user.create({
       data: {
@@ -48,6 +52,7 @@ export default defineEventHandler(async (event) => {
         bio: body.bio || null,
         avatar: body.avatar || null,
         status: body.status !== undefined ? body.status : true,
+        role,
       },
       select: {
         id: true,
@@ -56,6 +61,7 @@ export default defineEventHandler(async (event) => {
         avatar: true,
         bio: true,
         status: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },

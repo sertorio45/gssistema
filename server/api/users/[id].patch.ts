@@ -25,50 +25,17 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Preparar dados para atualização
+    // Verificar se outros campos foram fornecidos para atualização
     const updateData: any = {}
-
-    if (body.name) {
-      // Verificar se o novo nome já está em uso por outro usuário
-      if (body.name !== existingUser.name) {
-        const nameInUse = await prisma.user.findFirst({
-          where: { 
-            name: body.name,
-            NOT: { id: existingUser.id }
-          },
-        })
-
-        if (nameInUse) {
-          return createError({
-            statusCode: 400,
-            message: 'Este nome já está em uso',
-          })
-        }
-      }
+    
+    if (body.name !== undefined) {
       updateData.name = body.name
     }
     
-    if (body.email) {
-      // Verificar se o novo e-mail já está em uso por outro usuário
-      if (body.email !== existingUser.email) {
-        const emailInUse = await prisma.user.findUnique({
-          where: { email: body.email },
-        })
-
-        if (emailInUse) {
-          return createError({
-            statusCode: 400,
-            message: 'Este email já está em uso',
-          })
-        }
-      }
+    if (body.email !== undefined) {
       updateData.email = body.email
     }
-
-    if (body.password) {
-      updateData.password = await hash(body.password, 10)
-    }
-
+    
     if (body.bio !== undefined) {
       updateData.bio = body.bio
     }
@@ -77,20 +44,26 @@ export default defineEventHandler(async (event) => {
       updateData.avatar = body.avatar
     }
     
-    // Tratamento específico para o status
     if (body.status !== undefined) {
-      // Forçar o tipo para número e garantir que seja sempre 1 ou 0
-      let statusValue
-      
-      if (typeof body.status === 'string') {
-        statusValue = body.status === '1' ? 1 : 0
-      } else if (typeof body.status === 'boolean') {
-        statusValue = body.status === true ? 1 : 0
+      updateData.status = Number(body.status)
+    }
+    
+    if (body.password) {
+      // Hash da nova senha
+      updateData.password = await hash(body.password, 10)
+    }
+    
+    // Validar e atualizar a role
+    if (body.role !== undefined) {
+      const allowedRoles = ['admin', 'funcionario', 'cliente']
+      if (allowedRoles.includes(body.role)) {
+        updateData.role = body.role
       } else {
-        statusValue = parseInt(body.status) ? 1 : 0
+        return createError({
+          statusCode: 400,
+          message: 'Role inválida. Valores permitidos: admin, funcionario, cliente',
+        })
       }
-      
-      updateData.status = statusValue
     }
 
     console.error('Dados a serem atualizados:', updateData)

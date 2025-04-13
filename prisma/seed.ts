@@ -4,20 +4,57 @@ import { hash } from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  // Criar usuário admin
-  const hashedPassword = await hash('admin123', 10)
+  const hashedPassword = await hash('Senha@123456', 10)
   
+  // Criar usuário admin
   const admin = await prisma.user.upsert({
     where: { email: 'admin@admin.com' },
-    update: {},
+    update: {
+      role: 'admin',
+      password: hashedPassword
+    },
     create: {
       email: 'admin@admin.com',
       name: 'Administrador',
       password: hashedPassword,
+      role: 'admin',
+      status: 1
+    },
+  })
+  
+  // Criar usuário funcionário
+  const funcionario = await prisma.user.upsert({
+    where: { email: 'funcionario@exemplo.com' },
+    update: {
+      role: 'funcionario',
+      password: hashedPassword
+    },
+    create: {
+      email: 'funcionario@exemplo.com',
+      name: 'Funcionário Exemplo',
+      password: hashedPassword,
+      role: 'funcionario',
+      status: 1
+    },
+  })
+  
+  // Criar usuário cliente
+  const cliente = await prisma.user.upsert({
+    where: { email: 'cliente@exemplo.com' },
+    update: {
+      role: 'cliente',
+      password: hashedPassword
+    },
+    create: {
+      email: 'cliente@exemplo.com',
+      name: 'Cliente Exemplo',
+      password: hashedPassword,
+      role: 'cliente',
+      status: 1
     },
   })
 
-  console.log({ admin })
+  console.log({ admin, funcionario, cliente })
 }
 
 main()
