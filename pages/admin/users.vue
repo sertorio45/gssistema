@@ -527,6 +527,7 @@ onMounted(() => {
         <Table>
           <TableHeader class="bg-muted/50">
             <TableRow>
+              <TableHead class="w-14">Avatar</TableHead>
               <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Data de Criação</TableHead>
@@ -538,6 +539,7 @@ onMounted(() => {
           <TableBody>
             <template v-if="isLoading">
               <TableRow v-for="i in 5" :key="i">
+                <TableCell><Skeleton class="h-10 w-10 rounded-full" /></TableCell>
                 <TableCell><Skeleton class="h-5 w-[250px]" /></TableCell>
                 <TableCell><Skeleton class="h-5 w-[180px]" /></TableCell>
                 <TableCell><Skeleton class="h-5 w-[150px]" /></TableCell>
@@ -552,7 +554,7 @@ onMounted(() => {
               </TableRow>
             </template>
             <TableRow v-else-if="users.length === 0">
-              <TableCell colspan="6" class="h-24 text-center">
+              <TableCell colspan="7" class="h-24 text-center">
                 <div class="flex flex-col items-center justify-center gap-2 text-muted-foreground">
                   <Icon name="lucide:users-x" class="h-8 w-8" />
                   <p>Nenhum usuário encontrado.</p>
@@ -561,16 +563,16 @@ onMounted(() => {
             </TableRow>
             <template v-else>
               <TableRow v-for="user in users" :key="user.id" class="hover:bg-muted/30 transition-colors">
+                <TableCell class="text-center">
+                  <Avatar size="sm" shape="circle" class="border-2 border-muted mx-auto">
+                    <AvatarImage v-if="user.avatar" :src="user.avatar" />
+                    <AvatarFallback class="bg-primary/10 text-primary">
+                      {{ user.name.charAt(0).toUpperCase() }}
+                    </AvatarFallback>
+                  </Avatar>
+                </TableCell>
                 <TableCell>
-                  <div class="flex items-center gap-2">
-                    <Avatar size="sm" shape="circle" class="border-2 border-muted">
-                      <AvatarImage v-if="user.avatar" :src="user.avatar" />
-                      <AvatarFallback class="bg-primary/10 text-primary">
-                        {{ user.name.charAt(0).toUpperCase() }}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div class="font-medium">{{ user.name }}</div>
-                  </div>
+                  <div class="font-medium">{{ user.name }}</div>
                 </TableCell>
                 <TableCell class="text-muted-foreground">{{ user.email }}</TableCell>
                 <TableCell class="text-muted-foreground text-sm">{{ formatDate(user.createdAt) }}</TableCell>
