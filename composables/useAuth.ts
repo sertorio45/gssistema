@@ -81,9 +81,10 @@ export const useAuth = defineStore('auth', () => {
 
   // Carrega os dados do usuário quando houver um token
   const fetchUserData = async () => {
-    if (authToken.value && !user.value) {
+    if (authToken.value) {
       try {
         loading.value = true
+        error.value = null
         // Carrega os dados do usuário
         const userData = await $fetch<AuthResponse['user']>('/api/auth/me', {
           headers: {

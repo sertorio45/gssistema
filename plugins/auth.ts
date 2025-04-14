@@ -1,12 +1,18 @@
 export default defineNuxtPlugin(() => {
   const auth = useAuth()
 
-  addRouteMiddleware('global-auth', (to) => {
+  addRouteMiddleware('global-auth', async (to) => {
     // Lista de rotas públicas que não precisam de autenticação
     const publicPaths = ['/login', '/register', '/esqueci-senha', '/(auth)', '/forgot-password']
 
     // Verificar se a rota atual começa com algum dos caminhos públicos
     const isPublicRoute = publicPaths.some(path => to.path.startsWith(path))
+
+    // Se estiver autenticado mas não tiver dados do usuário, carrega-os
+    if (auth.isAuthenticated && !auth.user) {
+      console.warn('[AUTH] Carregando dados do usuário durante navegação')
+      await auth.fetchUserData()
+    }
 
     // Se não for uma rota pública e o usuário não estiver autenticado
     if (!isPublicRoute && !auth.isAuthenticated) {

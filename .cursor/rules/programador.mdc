@@ -1,0 +1,81 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Todas as nomemclaturas em ingles dos arquivos, rotas, bancos de dados e afins.
+- Use tecnicas de design ux e ui para criar os fronts.
+- Use sempre tecnologias como unocss e shadcn como biblioteca.
+- Sempre Skeleton para elementos dinamicos
+- Estou usando pnpm nesse app
+- Estou usando typescript
+
+- Tecnologias Utilizadas
+    Frontend: Nuxt 3 + Vue 3
+
+    Backend: SQLite + Prisma
+
+    Renderização: SSR + SSG
+
+    CMS: Directus (consumo via API)
+
+    Estilo: ShadCN UI + UnoCSS
+
+- Objetivo
+    Organizar de forma padronizada os arquivos da aplicação para garantir:
+
+    Escalabilidade e modularidade
+
+    Separação clara de responsabilidades
+
+    Reutilização de componentes e lógica
+
+    Manutenção simplificada ao longo do tempo
+
+- Estrutura Padrão
+
+    ├── assets/                     # Arquivos estáticos (imagens, ícones, fontes)
+    ├── components/                 # Componentes Vue reutilizáveis
+    │   ├── ui/                     # Componentes de UI genéricos (ex: Botão, Modal)
+    │   ├── layout/                 # Componentes estruturais (Header, Footer, Sidebar)
+    │   └── sections/              # Blocos CMS ou seções reutilizáveis
+    ├── composables/               # Composables (ex: useAuth, useApi, useArticle)
+    ├── layouts/                   # Layouts de páginas (ex: default.vue, admin.vue)
+    ├── middleware/                # Middlewares de frontend (auth, guest, etc.)
+    ├── pages/                     # Rotas da aplicação (com suporte a SSR/SSG)
+    │   ├── index.vue
+    │   ├── login.vue
+    │   ├── dashboard/
+    │   │   ├── index.vue
+    │   │   └── settings.vue
+    │   └── artigos/               # Exemplo de entidade (modelo base)
+    │       └── [slug].vue         # Página dinâmica com dados via CMS/DB
+    ├── public/                    # Arquivos públicos (favicons, robots.txt, etc.)
+    ├── server/
+    │   ├── api/                   # Endpoints backend organizados por domínio
+    │   │   ├── auth/
+    │   │   │   └── login.post.ts
+    │   │   └── artigos/
+    │   │       ├── index.get.ts
+    │   │       └── [slug].get.ts
+    │   └── middleware/            # Middlewares do lado do servidor
+    ├── types/                     # Tipos e interfaces TypeScript (ex: article.ts, user.ts)
+    ├── utils/                     # Helpers e funções utilitárias
+    ├── nuxt.config.ts             # Configuração do Nuxt
+    ├── app.vue                    # Entry point principal
+    ├── .env                       # Variáveis de ambiente
+    └── README.md
+
+- Como Adicionar Novos Módulos (ex: projetos, clientes)
+
+    Criar a rota dinâmica em pages/[modulo]/[slug].vue
+
+    Criar os endpoints REST em server/api/[modulo]/
+
+    Adicionar os tipos em types/[modulo].ts
+
+    Criar composables como use[Modulo].ts
+
+Adicionar componentes em components/sections/ se houver blocos CMS
+
+Seguir o padrão de carregamento via useAsyncData + SSR

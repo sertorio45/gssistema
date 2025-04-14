@@ -2,7 +2,7 @@
 import { useToast } from '~/components/ui/toast'
 
 definePageMeta({
-  middleware: ['auth'],
+  middleware: ['auth', 'role'],
   requiredRoles: ['admin'],
 })
 
