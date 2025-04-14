@@ -29,6 +29,28 @@ export const navMenu: NavMenu[] = [
     heading: '',
     items: [
       {
+        title: 'Articles',
+        icon: 'i-lucide-file-text',
+        requiredRoles: ['admin', 'funcionario', 'cliente'],
+        children: [
+          {
+            title: 'Listing all',
+            link: '/articles',
+            requiredRoles: ['admin', 'funcionario', 'cliente'],
+          },
+          {
+            title: 'Create',
+            link: '/articles/create',
+            requiredRoles: ['admin', 'funcionario'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    heading: '',
+    items: [
+      {
         title: 'Administration',
         icon: 'i-lucide-briefcase',
         requiredRoles: ['admin'],

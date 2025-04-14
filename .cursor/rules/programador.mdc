@@ -17,8 +17,6 @@ alwaysApply: true
 
     Renderização: SSR + SSG
 
-    CMS: Directus (consumo via API)
-
     Estilo: ShadCN UI + UnoCSS
 
 - Objetivo
