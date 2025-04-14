@@ -1,0 +1,179 @@
+<script setup lang="ts">
+import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import Editor from '@tinymce/tinymce-vue'
+import { computed, onMounted, ref, watch } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: '',
+  },
+  label: {
+    type: String,
+    default: 'Conteúdo',
+  },
+  placeholder: {
+    type: String,
+    default: 'Digite seu conteúdo aqui...',
+  },
+  editorId: {
+    type: String,
+    default: 'tiny-editor',
+  },
+  height: {
+    type: [Number, String],
+    default: 500,
+  },
+  error: {
+    type: String,
+    default: '',
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const emit = defineEmits(['update:modelValue'])
+const editorInitialized = ref(false)
+const content = ref(props.modelValue)
+const editorInstance = ref<any>(null)
+const isReloading = ref(false)
+const currentTheme = ref('')
+
+// Detectar o tema do sistema
+const colorMode = useColorMode()
+const isDarkMode = computed(() => {
+  // Retorna true para 'dark' mode, false para 'light' mode
+  // Para 'system', verifica a preferência do sistema
+  if (colorMode.preference === 'dark') {
+    return true
+  }
+  if (colorMode.preference === 'light') {
+    return false
+  }
+  return colorMode.value === 'dark'
+})
+
+// Valor estável do tema para evitar re-renders desnecessários
+const theme = computed(() => isDarkMode.value ? 'dark' : 'light')
+
+// Registrar o tema atual na montagem para evitar reinicializações desnecessárias
+onMounted(() => {
+  currentTheme.value = theme.value
+})
+
+// Configurações do TinyMCE
+const editorConfig = computed(() => ({
+  height: props.height,
+  menubar: true,
+  relative_urls: false,
+  remove_script_host: false,
+  plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+  toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link image | code',
+  content_style: `
+    :root {
+      color-scheme: ${isDarkMode.value ? 'dark' : 'light'};
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      padding: 10px;
+      background-color: ${isDarkMode.value ? '#1e1e2d' : '#ffffff'};
+      color: ${isDarkMode.value ? '#e2e8f0' : '#0f172a'};
+    }
+    a { color: ${isDarkMode.value ? '#7dd3fc' : '#0369a1'}; }
+    code { background-color: ${isDarkMode.value ? '#1e293b' : '#f1f5f9'}; padding: 2px 4px; border-radius: 3px; }
+    table { border-collapse: collapse; }
+    table td, table th { border: 1px solid ${isDarkMode.value ? '#334155' : '#cbd5e1'}; padding: 4px 8px; }
+  `,
+  skin: isDarkMode.value ? 'oxide-dark' : 'oxide',
+  content_css: isDarkMode.value ? 'dark' : 'default',
+  branding: false,
+  promotion: false,
+  elementpath: false,
+  statusbar: true,
+  resize: true,
+  placeholder: props.placeholder,
+  setup: (editor: any) => {
+    editorInstance.value = editor
+    editor.on('init', () => {
+      editorInitialized.value = true
+    })
+  },
+}))
+
+// Manipuladores de eventos
+function handleEditorInit(): void {
+  editorInitialized.value = true
+}
+
+function handleEditorChange(e: string): void {
+  content.value = e
+  emit('update:modelValue', e)
+}
+
+// Observar mudanças no tema com proteção contra loop infinito
+watch(theme, (newTheme) => {
+  // Evitar múltiplas reinicializações
+  if (newTheme === currentTheme.value || isReloading.value) {
+    return
+  }
+
+  // Atualiza o tema atual
+  currentTheme.value = newTheme
+
+  // Apenas reinicializar se o editor estiver pronto
+  if (editorInitialized.value && editorInstance.value) {
+    isReloading.value = true
+
+    // Salvar o conteúdo atual
+    const currentContent = content.value
+
+    // Remover editor antigo
+    editorInstance.value.remove()
+    editorInitialized.value = false
+
+    // Programar a restauração
+    setTimeout(() => {
+      // Restaurar conteúdo
+      content.value = currentContent
+      // Permitir nova reinicialização
+      isReloading.value = false
+    }, 250)
+  }
+}, { flush: 'post' })
+
+// Atualizar o editor quando o modelValue mudar externamente
+watch(() => props.modelValue, (newValue) => {
+  if (newValue !== content.value) {
+    content.value = newValue
+  }
+})
+</script>
+
+<template>
+  <FormItem :class="{ 'opacity-60': disabled }">
+    <FormLabel v-if="label">{{ label }}</FormLabel>
+    <FormControl>
+      <div class="relative border border-input rounded-md bg-background">
+        <div v-if="!editorInitialized" class="min-h-[200px] w-full grid place-items-center">
+          <div class="flex flex-col items-center">
+            <div class="animate-spin w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full mb-2"></div>
+            <span class="text-sm text-muted-foreground">Carregando editor...</span>
+          </div>
+        </div>
+        <Editor
+          v-if="!isReloading"
+          :id="editorId"
+          :model-value="content"
+          :init="editorConfig"
+          :disabled="disabled"
+          @onInit="handleEditorInit"
+          @update:modelValue="handleEditorChange"
+        />
+      </div>
+    </FormControl>
+    <FormMessage v-if="error">{{ error }}</FormMessage>
+  </FormItem>
+</template> 

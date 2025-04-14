@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/toast'
 import { articleDefaultValues, articleFormSchema } from '@/types/article'
 import { statuses } from '../data/data'
 import '@/composables/useArticle'
+import TinyEditor from '@/components/ui/tiny-editor/TinyEditor.vue'
 
 const props = defineProps({
   initialValues: {
@@ -60,6 +61,11 @@ const categories = [
   { id: '3', name: 'Marketing' },
   { id: '4', name: 'Design' },
 ]
+
+// Atualizar o conteúdo do editor
+function updateContent(content) {
+  setFieldValue('content', content)
+}
 </script>
 
 <template>
@@ -113,12 +119,17 @@ const categories = [
                 </FormItem>
               </FormField>
 
-              <FormField v-slot="{ componentField }" name="content">
+              <FormField name="content">
                 <FormItem>
                   <FormLabel>Conteúdo</FormLabel>
-                  <FormControl>
-                    <Textarea v-bind="componentField" placeholder="Conteúdo do artigo em Markdown" :rows="10" />
-                  </FormControl>
+                  <TinyEditor
+                    v-model="values.content"
+                    :disabled="isSubmitting"
+                    :placeholder="'Conteúdo do artigo em formato rico'"
+                    :height="500"
+                    :editor-id="'article-content-editor'"
+                    @update:modelValue="updateContent"
+                  />
                   <FormMessage />
                 </FormItem>
               </FormField>
@@ -207,33 +218,33 @@ const categories = [
             </div>
           </CardContent>
         </Card>
+        
+        <!-- Botões de Ação -->
+        <div class="flex items-center justify-end space-x-4 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            @click="onCancel"
+            :disabled="isSubmitting"
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            :disabled="isSubmitting"
+            class="min-w-[120px]"
+          >
+            <template v-if="isSubmitting">
+              <Icon name="i-radix-icons-spinner" class="mr-2 h-4 w-4 animate-spin" />
+              {{ isEditing ? 'Salvando...' : 'Criando...' }}
+            </template>
+            <template v-else>
+              <Icon :name="isEditing ? 'i-radix-icons-check' : 'i-radix-icons-plus'" class="mr-2 h-4 w-4" />
+              {{ isEditing ? 'Salvar Alterações' : 'Criar Artigo' }}
+            </template>
+          </Button>
+        </div>
       </div>
-    </div>
-
-    <!-- Botões de Ação -->
-    <div class="flex items-center justify-end space-x-4 pt-6 border-t">
-      <Button
-        type="button"
-        variant="outline"
-        @click="onCancel"
-        :disabled="isSubmitting"
-      >
-        Cancelar
-      </Button>
-      <Button
-        type="submit"
-        :disabled="isSubmitting"
-        class="min-w-[120px]"
-      >
-        <template v-if="isSubmitting">
-          <Icon name="i-radix-icons-spinner" class="mr-2 h-4 w-4 animate-spin" />
-          {{ isEditing ? 'Salvando...' : 'Criando...' }}
-        </template>
-        <template v-else>
-          <Icon :name="isEditing ? 'i-radix-icons-check' : 'i-radix-icons-plus'" class="mr-2 h-4 w-4" />
-          {{ isEditing ? 'Salvar Alterações' : 'Criar Artigo' }}
-        </template>
-      </Button>
     </div>
   </form>
 </template> 

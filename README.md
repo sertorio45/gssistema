@@ -222,3 +222,34 @@ definePageMeta({
   middleware: 'auth'
 });
 ```
+
+# GS Sistema
+
+## Configuração do TinyMCE (Editor de Texto Rico)
+
+O sistema utiliza o TinyMCE como editor de texto rico para edição de artigos.
+
+### Instalação do TinyMCE (Self-hosted)
+
+Para usar o TinyMCE sem API key, é necessário baixar a versão self-hosted e configurá-la:
+
+1. Baixe a versão mais recente do TinyMCE Community em: https://www.tiny.cloud/get-tiny/self-hosted/
+
+2. Extraia os arquivos e copie o conteúdo para a pasta `/public/tinymce/` do projeto
+
+3. A estrutura de pastas deve ser semelhante a:
+   ```
+   /public/tinymce/
+     ├── icons/
+     ├── plugins/
+     ├── skins/
+     ├── themes/
+     ├── tinymce.min.js
+     └── ...
+   ```
+
+4. O editor já está configurado para buscar o script em `/tinymce/tinymce.min.js`
+
+### Personalização
+
+O componente TinyEditor (`components/ui/tiny-editor/TinyEditor.vue`) pode ser personalizado conforme necessário.
