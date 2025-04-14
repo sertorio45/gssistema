@@ -167,6 +167,7 @@ const editorConfig = computed(() => {
     .tox-tinymce {
       border-color: ${c.border} !important;
       border-radius: 0.375rem !important;
+      border: 0px solid transparent !important;
     }
 
     .tox .tox-toolbar, .tox .tox-toolbar__primary, .tox .tox-toolbar__overflow {
@@ -210,7 +211,7 @@ const editorConfig = computed(() => {
         color: ${c.foreground} !important;
         border-color: ${c.border} !important;
       }
-  
+
       .tox .tox-tbtn,
       .tox .tox-tbtn:hover,
       .tox .tox-mbtn,
@@ -222,7 +223,7 @@ const editorConfig = computed(() => {
         background-color: ${c.muted} !important;
         color: ${c.foreground} !important;
       }
-  
+
       .tox .tox-tbtn svg,
       .tox .tox-mbtn__select-chevron,
       .tox .tox-mbtn__select-label,
@@ -237,7 +238,7 @@ const editorConfig = computed(() => {
         color: ${c.foreground} !important;
         fill: ${c.foreground} !important;
       }
-  
+
       .tox .tox-tbtn--enabled,
       .tox .tox-tbtn--enabled:hover,
       .tox .tox-mbtn--active,
@@ -245,54 +246,54 @@ const editorConfig = computed(() => {
         background-color: ${c.accent} !important;
         color: ${c.foreground} !important;
       }
-  
+
       .tox .tox-button,
       .tox .tox-button.tox-button--secondary {
         background-color: ${c.primary} !important;
         color: ${c.background} !important;
         border-color: ${c.primary} !important;
       }
-  
+
       .tox .tox-button--secondary,
       .tox .tox-button.tox-button--secondary {
         background-color: ${c.secondary} !important;
         color: ${c.foreground} !important;
         border-color: ${c.border} !important;
       }
-  
+
       .tox .tox-button--naked {
         background-color: transparent !important;
         color: ${c.mutedForeground} !important;
       }
-  
+
       .tox .tox-collection--list .tox-collection__item--active,
       .tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
         background-color: ${c.accent} !important;
       }
-  
+
       .tox .tox-tbtn:hover,
       .tox .tox-mbtn:hover,
       .tox .tox-tbtn:focus,
       .tox .tox-mbtn:focus {
         background-color: ${c.muted} !important;
       }
-  
+
       /* Elementos específicos que precisam de estilização para o tema escuro */
       .tox .tox-promotion {
         background-color: ${c.background} !important;
         color: ${c.foreground} !important;
         border-color: ${c.border} !important;
       }
-  
+
       .tox:not(.tox-tinymce-inline) .tox-editor-header {
         background-color: ${c.background} !important;
         border-bottom: 1px solid ${c.border} !important;
       }
-  
+
       .tox .tox-toolbar-overlord {
         background-color: ${c.background} !important;
       }
-  
+
       /* Ajustes adicionais para garantir consistência no tema escuro */
       .tox .tox-menu,
       .tox .tox-dialog__header,
@@ -306,13 +307,13 @@ const editorConfig = computed(() => {
         background-color: ${c.background} !important;
         border-color: ${c.border} !important;
       }
-  
+
       /* Ajustar cores dos botões de menu */
       .tox .tox-collection__item {
         background-color: ${c.background} !important;
         color: ${c.foreground} !important;
       }
-  
+
       .tox .tox-collection__item:hover {
         background-color: ${c.muted} !important;
       }
@@ -329,6 +330,18 @@ const editorConfig = computed(() => {
     if (existingStyle) {
       existingStyle.remove()
     }
+
+    // Adicionar estilo para remover a borda no tema claro
+    const lightThemeStyle = document.createElement('style')
+    lightThemeStyle.id = 'tinymce-light-theme-custom'
+    lightThemeStyle.innerHTML = `
+      .tox.tox-tinymce {
+        border: 0px solid transparent !important;
+        border-radius: 10px !important;
+        box-shadow: none !important;
+      }
+    `
+    document.head.appendChild(lightThemeStyle)
   }
 
   return {
@@ -364,7 +377,7 @@ const editorConfig = computed(() => {
                   background-color: ${c.background} !important;
                   color: ${c.foreground} !important;
                 }
-                
+
                 /* Estilização do placeholder */
                 .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
                   color: ${c.mutedForeground} !important;
