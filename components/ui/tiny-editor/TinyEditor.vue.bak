@@ -246,6 +246,13 @@ const editorConfig = computed(() => {
         border-color: ${c.border} !important;
       }
 
+      /* Estilos específicos para as toolbars - background-image transparente */
+      .tox .tox-toolbar, 
+      .tox .tox-toolbar__overflow, 
+      .tox .tox-toolbar__primary {
+        background-image: none !important;
+      }
+
       .tox .tox-tbtn,
       .tox .tox-tbtn:hover,
       .tox .tox-mbtn,
@@ -350,11 +357,6 @@ const editorConfig = computed(() => {
 
       .tox .tox-collection__item:hover {
         background-color: ${c.muted} !important;
-      }
-
-      /* Adicionar estilo de background para toolbar */
-      .tox .tox-toolbar {
-        background-image: repeating-linear-gradient(rgba(255, 255, 255, 0) 0 1px, transparent 1px 400px) !important;
       }
     `
     // Adicionar o estilo ao documento se ainda não estiver presente
@@ -533,135 +535,4 @@ const editorConfig = computed(() => {
         // Injetar estilos personalizados diretamente no iframe do editor
         if (isDarkMode.value) {
           try {
-            const editorIframe = document.getElementById(`${props.editorId}_ifr`) as HTMLIFrameElement
-            if (editorIframe && editorIframe.contentDocument) {
-              const iframeHead = editorIframe.contentDocument.head
-              const iframeStyle = document.createElement('style')
-              iframeStyle.innerHTML = `
-                body {
-                  background-color: ${c.background} !important;
-                  color: ${c.foreground} !important;
-                }
-
-                /* Estilização do placeholder */
-                .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
-                  color: ${c.mutedForeground} !important;
-                  content: attr(data-mce-placeholder);
-                  position: absolute;
-                  opacity: 0.7;
-                }
-              `
-              iframeHead.appendChild(iframeStyle)
-            }
-          }
-          catch (error) {
-            console.error('Erro ao injetar estilos no iframe:', error)
-          }
-        }
-      })
-    },
-
-    // Configurações específicas para tabelas
-    table_appearance_options: false,
-    table_advtab: true,
-    table_cell_advtab: true,
-    table_row_advtab: true,
-    table_responsive_width: true,
-    table_default_styles: {
-      width: '100%',
-      borderCollapse: 'collapse',
-    },
-    table_default_attributes: {
-      border: '0',
-    },
-    table_class_list: [
-      { title: 'Tabela padrão', value: '' },
-      { title: 'Sem bordas', value: 'table-borderless' },
-    ],
-  }
-})
-
-// Manipuladores de eventos
-function handleEditorInit(): void {
-  editorInitialized.value = true
-}
-
-function handleEditorChange(e: string): void {
-  content.value = e
-  emit('update:modelValue', e)
-}
-
-// Observar mudanças no tema com proteção contra loop infinito
-watch(theme, (newTheme) => {
-  // Evitar múltiplas reinicializações
-  if (newTheme === currentTheme.value || isReloading.value) {
-    return
-  }
-
-  // Atualiza o tema atual
-  currentTheme.value = newTheme
-
-  // Apenas reinicializar se o editor estiver pronto
-  if (editorInitialized.value && editorInstance.value) {
-    isReloading.value = true
-
-    // Salvar o conteúdo atual
-    const currentContent = content.value
-
-    // Remover editor antigo
-    editorInstance.value.remove()
-    editorInitialized.value = false
-
-    // Programar a restauração
-    setTimeout(() => {
-      // Restaurar conteúdo
-      content.value = currentContent
-      // Permitir nova reinicialização
-      isReloading.value = false
-    }, 250)
-  }
-}, { flush: 'post' })
-
-// Atualizar o editor quando o modelValue mudar externamente
-watch(() => props.modelValue, (newVal) => {
-  if (newVal !== content.value && editorInstance.value) {
-    content.value = newVal
-  }
-})
-
-onMounted(() => {
-  window.onLoaded = true;
-});
-</script>
-
-<template>
-  <FormItem :class="{ 'opacity-60': disabled }">
-    <FormLabel v-if="label">{{ label }}</FormLabel>
-    <FormControl>
-      <div class="relative border border-input rounded-md bg-background">
-        <div v-if="!editorInitialized" class="min-h-[200px] w-full grid place-items-center">
-          <div class="flex flex-col items-center">
-            <div class="animate-spin w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full mb-2"></div>
-            <span class="text-sm text-muted-foreground">Carregando editor...</span>
-          </div>
-        </div>
-        <Editor
-          v-if="!isReloading"
-          :id="editorId"
-          :model-value="content"
-          :init="editorConfig"
-          :disabled="disabled"
-          @onInit="handleEditorInit"
-          @update:modelValue="handleEditorChange"
-        />
-      </div>
-    </FormControl>
-    <FormMessage v-if="error">{{ error }}</FormMessage>
-  </FormItem>
-</template>
-
-<style>
-  .tox .tox-toolbar {
-    background-image: repeating-linear-gradient(rgba(255, 255, 255, 0) 0 1px, transparent 1px 400px)!important;
-  }
-</style>
+            const editorIframe = document.getElementById(`

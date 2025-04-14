@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import * as z from 'zod'
-import { useField, useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useField, useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { useToast } from '@/components/ui/toast'
 import { articleDefaultValues, articleFormSchema } from '@/types/article'
 import { statuses } from '../data/data'
 import '@/composables/useArticle'
 import TinyEditor from '@/components/ui/tiny-editor/TinyEditor.vue'
+import slugify from 'slugify'
 
 const props = defineProps({
   initialValues: {
@@ -36,12 +37,29 @@ const form = useForm({
 
 const { handleSubmit, resetForm, setFieldValue, values } = form
 
-// Gerar automaticamente o slug com base no título
-watch(() => values.title, (newValue) => {
-  if (!props.isEditing && newValue && !values.slug) {
-    setFieldValue('slug', generateSlug(newValue))
-  }
+// Estado para controlar se os campos estão carregando
+const isLoading = ref(true)
+const isSlugGenerating = ref(false)
+
+// Simular carregamento
+onMounted(() => {
+  setTimeout(() => {
+    isLoading.value = false
+  }, 500)
 })
+
+// Função para gerar slug a partir do título quando o usuário sair do campo
+function handleTitleBlur() {
+  if (!props.isEditing && values.title) {
+    isSlugGenerating.value = true
+
+    // Simular um pequeno atraso para mostrar o skeleton
+    setTimeout(() => {
+      setFieldValue('slug', generateSlug(values.title))
+      isSlugGenerating.value = false
+    }, 300)
+  }
+}
 
 // Manipular o envio do formulário
 const onSubmit = handleSubmit((values) => {
@@ -63,7 +81,7 @@ const categories = [
 ]
 
 // Atualizar o conteúdo do editor
-function updateContent(content) {
+function updateContent(content: string) {
   setFieldValue('content', content)
 }
 </script>
@@ -80,23 +98,34 @@ function updateContent(content) {
                 <FormItem>
                   <FormLabel>Título</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" placeholder="Título do artigo" />
+                    <Skeleton v-if="isLoading" class="h-10 w-full" />
+                    <Input
+                      v-else
+                      v-bind="componentField"
+                      placeholder="Título do artigo"
+                      @blur="handleTitleBlur"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
 
+              <!-- Exibir o slug logo abaixo do título -->
               <FormField v-slot="{ componentField }" name="slug">
-                <FormItem>
-                  <FormLabel>Slug</FormLabel>
-                  <FormControl>
-                    <div class="flex items-center gap-1">
-                      <span class="text-sm text-muted-foreground">/artigos/</span>
-                      <Input v-bind="componentField" placeholder="url-do-artigo" class="flex-1" />
+                <FormItem class="mt-1">
+                  <div class="flex items-center gap-2">
+                    <FormLabel class="text-sm font-normal mb-0">Slug:</FormLabel>
+                    <Skeleton v-if="isLoading || isSlugGenerating" class="h-6 w-48" />
+                    <div v-else class="flex items-center">
+                      <Input
+                        v-bind="componentField"
+                        placeholder="url-do-artigo"
+                        class="h-7 text-sm"
+                      />
                     </div>
-                  </FormControl>
-                  <FormDescription>
-                    URL amigável para o artigo
+                  </div>
+                  <FormDescription v-if="!isEditing" class="text-xs">
+                    Gerado automaticamente quando você terminar de escrever o título
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -106,7 +135,9 @@ function updateContent(content) {
                 <FormItem>
                   <FormLabel>Meta Descrição</FormLabel>
                   <FormControl>
+                    <Skeleton v-if="isLoading" class="h-[82px] w-full" />
                     <Textarea
+                      v-else
                       v-bind="componentField"
                       placeholder="Breve descrição do artigo que aparecerá nos resultados de pesquisa"
                       :rows="3"
@@ -121,12 +152,14 @@ function updateContent(content) {
 
               <FormField name="content">
                 <FormItem>
+                  <Skeleton v-if="isLoading" class="h-[500px] w-full" />
                   <TinyEditor
+                    v-else
                     v-model="values.content"
                     :disabled="isSubmitting"
-                    :placeholder="'Conteúdo do artigo em formato rico'"
+                    placeholder="Conteúdo do artigo em formato rico"
                     :height="500"
-                    :editor-id="'article-content-editor'"
+                    editor-id="article-content-editor"
                     @update:modelValue="updateContent"
                   />
                   <FormMessage />
@@ -150,7 +183,8 @@ function updateContent(content) {
                 <FormItem>
                   <FormLabel>Status</FormLabel>
                   <FormControl>
-                    <Select v-bind="componentField">
+                    <Skeleton v-if="isLoading" class="h-10 w-full" />
+                    <Select v-else v-bind="componentField">
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um status" />
                       </SelectTrigger>
@@ -183,7 +217,8 @@ function updateContent(content) {
                 <FormItem>
                   <FormLabel>Categoria</FormLabel>
                   <FormControl>
-                    <Select v-bind="componentField">
+                    <Skeleton v-if="isLoading" class="h-10 w-full" />
+                    <Select v-else v-bind="componentField">
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione uma categoria" />
                       </SelectTrigger>
@@ -206,7 +241,12 @@ function updateContent(content) {
                 <FormItem>
                   <FormLabel>Tags</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" placeholder="vue, nuxt, web" />
+                    <Skeleton v-if="isLoading" class="h-10 w-full" />
+                    <Input
+                      v-else
+                      v-bind="componentField"
+                      placeholder="vue, nuxt, web"
+                    />
                   </FormControl>
                   <FormDescription>
                     Separadas por vírgula (ex: vue, nuxt, web)
@@ -217,20 +257,20 @@ function updateContent(content) {
             </div>
           </CardContent>
         </Card>
-        
+
         <!-- Botões de Ação -->
         <div class="flex items-center justify-end space-x-4 pt-4">
           <Button
             type="button"
             variant="outline"
             @click="onCancel"
-            :disabled="isSubmitting"
+            :disabled="isSubmitting || isLoading"
           >
             Cancelar
           </Button>
           <Button
             type="submit"
-            :disabled="isSubmitting"
+            :disabled="isSubmitting || isLoading"
             class="min-w-[120px]"
           >
             <template v-if="isSubmitting">
@@ -246,4 +286,4 @@ function updateContent(content) {
       </div>
     </div>
   </form>
-</template> 
+</template>

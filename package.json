@@ -88,6 +88,7 @@
     "prisma": "^6.6.0",
     "radix-vue": "^1.9.17",
     "shadcn-nuxt": "^0.10.4",
+    "slugify": "^1.6.6",
     "tailwind-merge": "^2.6.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
