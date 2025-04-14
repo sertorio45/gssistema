@@ -121,7 +121,6 @@ function updateContent(content) {
 
               <FormField name="content">
                 <FormItem>
-                  <FormLabel>Conteúdo</FormLabel>
                   <TinyEditor
                     v-model="values.content"
                     :disabled="isSubmitting"
