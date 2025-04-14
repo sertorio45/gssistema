@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
     '/api/auth/login',
     '/api/auth/register',
     '/api/auth/forgot-password',
+    '/api/upload/image', // Permitir upload de imagens sem autenticação
   ]
 
   // Ignora rotas públicas

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import Editor from '@tinymce/tinymce-vue'
+import type { Editor as TinyMCEEditor } from 'tinymce'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -73,7 +74,7 @@ const editorConfig = computed(() => {
     secondary: 'hsl(240 3.7% 15.9%)', // --secondary
     muted: 'hsl(240 3.7% 15.9%)', // --muted
     mutedForeground: 'hsl(240 5% 64.9%)', // --muted-foreground
-    accent: 'hsl(240 3.7% 15.9%)', // --accent
+    accent: 'hsl(240 3.7% 15.9%)', // --accen
     link: 'hsl(217.2 91.2% 59.8%)', // link color alinhado com tema escuro
   }
 
@@ -87,7 +88,7 @@ const editorConfig = computed(() => {
     secondary: 'hsl(240 4.8% 95.9%)', // --secondary
     muted: 'hsl(240 4.8% 95.9%)', // --muted
     mutedForeground: 'hsl(240 3.8% 46.1%)', // --muted-foreground
-    accent: 'hsl(240 4.8% 95.9%)', // --accent
+    accent: 'hsl(240 4.8% 95.9%)', // --accen
     link: 'hsl(221.2 83.2% 53.3%)', // link color alinhado com tema claro
   }
 
@@ -360,6 +361,114 @@ const editorConfig = computed(() => {
     relative_urls: false,
     remove_script_host: false,
     placeholder: props.placeholder,
+
+    // Configurações para upload de imagens
+    images_upload_url: '/api/upload/image', // Endpoint para upload de imagens
+    automatic_uploads: true,
+    images_reuse_filename: true,
+    file_picker_types: 'image',
+
+    // Configuração do seletor de imagens
+    image_title: true,
+    image_caption: true,
+    image_advtab: true, // Aba avançada de configuração de imagem
+
+    // Configuração de tipos de arquivos permitidos
+    images_file_types: 'jpeg,jpg,png,gif,webp,svg',
+
+    // Função para customizar o callback de upload
+    images_upload_handler: (blobInfo: any, progress: any) => new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.withCredentials = false
+      xhr.open('POST', '/api/upload/image')
+
+      xhr.upload.onprogress = (e) => {
+        progress(e.loaded / e.total * 100)
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 403) {
+          reject(new Error('Acesso negado ao fazer upload'))
+          return
+        }
+
+        if (xhr.status < 200 || xhr.status >= 300) {
+          reject(new Error('Erro no upload. Tente novamente.'))
+          return
+        }
+
+        try {
+          const json = JSON.parse(xhr.responseText)
+
+          if (!json || typeof json.location !== 'string') {
+            reject(new Error('Resposta inválida do servidor de upload'))
+            return
+          }
+
+          resolve(json.location)
+        } catch (error) {
+          console.error('Erro ao processar resposta:', error)
+          reject(new Error('Erro ao processar a resposta do servidor'))
+        }
+      }
+
+      xhr.onerror = () => {
+        console.error('Erro na requisição de upload')
+        reject(new Error('Erro na conexão com o servidor de upload'))
+      }
+
+      const formData = new FormData()
+      formData.append('file', blobInfo.blob(), blobInfo.filename())
+
+      xhr.send(formData)
+    }),
+
+    // Função para customizar o seletor de arquivos
+    file_picker_callback: (callback: any, value: any, meta: any) => {
+      // Apenas para imagens
+      if (meta.filetype === 'image') {
+        const input = document.createElement('input')
+        input.setAttribute('type', 'file')
+        input.setAttribute('accept', 'image/*')
+
+        input.addEventListener('change', (e: any) => {
+          const file = e.target.files[0]
+
+          if (!file) {
+            return
+          }
+
+          // Criar leitor de arquivo para pré-visualização
+          const reader = new FileReader()
+          reader.addEventListener('load', () => {
+            const id = `blobid${(new Date()).getTime()}`
+            
+            // Verificar se o editor está disponível
+            if (!editorInstance.value) {
+              console.error('Editor não inicializado corretamente')
+              return
+            }
+            
+            try {
+              // @ts-expect-error - Interface do TinyMCE não está completamente tipada
+              const blobCache = editorInstance.value.editorUpload.blobCache
+              const base64 = (reader.result as string).split(',')[1]
+              const blobInfo = blobCache.create(id, file, base64)
+              blobCache.add(blobInfo)
+
+              // Chamar o callback com o URL do blob
+              callback(blobInfo.blobUri(), { title: file.name })
+            } catch (error) {
+              console.error('Erro ao processar arquivo para upload:', error)
+            }
+          })
+          reader.readAsDataURL(file)
+        })
+
+        input.click()
+      }
+    },
+
     setup: (editor: any) => {
       editorInstance.value = editor
       editor.on('init', () => {
