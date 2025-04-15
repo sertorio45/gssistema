@@ -73,8 +73,13 @@ function handleCancel() {
             class="mr-2"
             @click="router.push(`/articles/${id}`)"
           >
-            <Icon name="i-radix-icons-eye" class="mr-2 h-4 w-4" />
+            <Icon name="radix-icons:eye-open" class="mr-2 h-4 w-4" />
             Visualizar artigo
+          </Button>
+          
+          <Button>
+            <Icon name="radix-icons:magic-wand" class="mr-2 h-4 w-4" />
+            Gerar com IA
           </Button>
         </div>
       </div>
@@ -91,7 +96,7 @@ function handleCancel() {
       <Card class="border-destructive/50">
         <CardHeader>
           <CardTitle class="flex items-center text-destructive">
-            <Icon name="i-radix-icons-exclamation-triangle" class="mr-2 h-5 w-5" />
+            <Icon name="i-radix-icons-exclamation-triangle" class="mr-2 h-5 w-5 text-destructive" />
             Erro ao carregar
           </CardTitle>
           <CardDescription>
@@ -103,7 +108,7 @@ function handleCancel() {
         </CardContent>
         <CardFooter class="border-t bg-muted/50 px-6 py-4">
           <Button variant="default" @click="router.push('/articles')">
-            <Icon name="i-radix-icons-arrow-left" class="mr-2 h-4 w-4" />
+            <Icon name="i-radix-icons-arrow-left" class="mr-2 h-4 w-4 text-primary-foreground" />
             Voltar para a lista
           </Button>
         </CardFooter>

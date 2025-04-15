@@ -34,7 +34,7 @@ function navigateToView() {
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" class="w-[160px]">
       <DropdownMenuItem @click="navigateToView">
-        <Icon name="i-radix-icons-eye" class="mr-2 h-4 w-4" />
+        <Icon name="radix-icons:eye-open" class="mr-2 h-4 w-4" />
         Visualizar
       </DropdownMenuItem>
       <DropdownMenuItem @click="navigateToEdit">

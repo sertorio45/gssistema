@@ -49,6 +49,13 @@ function handleCancel() {
             Crie um novo artigo para publicação no sistema
           </p>
         </div>
+        
+        <div>
+          <Button>
+            <Icon name="radix-icons:magic-wand" class="mr-2 h-4 w-4" />
+            Gerar com IA
+          </Button>
+        </div>
       </div>
     </div>
     
