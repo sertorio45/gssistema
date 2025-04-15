@@ -2,6 +2,18 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  app: {
+    head: {
+      title: 'Nuxt App',
+      meta: [
+        { name: 'description', content: 'Nuxt App' },
+      ],
+    },
+  },
+  nitro: {
+    preset: 'vercel'
+  },
+
   modules: [
     '@unocss/nuxt',
     'shadcn-nuxt',
