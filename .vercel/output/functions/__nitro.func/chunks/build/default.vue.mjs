@@ -1,7 +1,7 @@
 import { defineComponent, mergeProps, unref, withCtx, createVNode, renderSlot, computed, resolveDynamicComponent, createBlock, openBlock, Fragment, createTextVNode, toDisplayString, useSSRContext, ref, isRef, createCommentVNode, renderList, watch } from 'vue';
 import { ssrRenderAttrs, ssrRenderSlot, ssrRenderComponent, ssrRenderClass, ssrInterpolate, ssrRenderVNode, ssrRenderStyle, ssrRenderList } from 'vue/server-renderer';
 import { _ as _export_sfc } from './_plugin-vue_export-helper.mjs';
-import { d as cn, P as _sfc_main$p, R as _sfc_main$q, W as useMediaQuery, l as useVModel, $ as useEventListener, a0 as useAppConfig, a as _sfc_main$u, b as __nuxt_component_9, H as useShortcuts, e as useRouter, I as defineShortcuts, u as useAuth, o as _sfc_main$O, q as _sfc_main$P, s as _sfc_main$Q, t as _sfc_main$R, v as _sfc_main$X, a1 as _sfc_main$Y, a2 as useAppSettings, y as useRoute, c as _sfc_main$Z } from './server.mjs';
+import { d as cn, P as _sfc_main$p, R as _sfc_main$q, W as useMediaQuery, y as useVModel, $ as useEventListener, a0 as useAppConfig, a as _sfc_main$u, b as __nuxt_component_9, H as useShortcuts, e as useRouter, I as defineShortcuts, u as useAuth, g as _sfc_main$O, h as _sfc_main$P, i as _sfc_main$Q, j as _sfc_main$R, k as _sfc_main$X, a1 as _sfc_main$Y, a2 as useAppSettings, l as useRoute, c as _sfc_main$Z } from './server.mjs';
 import { createContext, Primitive, TooltipProvider } from 'radix-vue';
 import { _ as __nuxt_component_15 } from './nuxt-link.mjs';
 import { _ as _sfc_main$y, a as _sfc_main$z, b as _sfc_main$A, c as _sfc_main$C } from './DropdownMenuTrigger.vue2.mjs';
@@ -30,6 +30,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

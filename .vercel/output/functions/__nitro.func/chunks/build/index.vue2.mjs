@@ -2,7 +2,7 @@ import { defineComponent, ref, mergeProps, unref, withCtx, createVNode, createBl
 import { ssrRenderAttrs, ssrRenderComponent, ssrInterpolate, ssrRenderList, ssrRenderAttr, ssrRenderSlot } from 'vue/server-renderer';
 import NumberFlow from '@number-flow/vue';
 import { Calendar, DollarSign, Users, CreditCard, Activity } from 'lucide-vue-next';
-import { d as cn, a as _sfc_main$9, X as useMounted, q as _sfc_main$g, t as _sfc_main$h } from './server.mjs';
+import { d as cn, a as _sfc_main$9, X as useMounted, h as _sfc_main$g, j as _sfc_main$h } from './server.mjs';
 import { DateFormatter, CalendarDate, getLocalTimeZone } from '@internationalized/date';
 import { _ as _sfc_main$7, a as _sfc_main$8, b as _sfc_main$a } from './PopoverTrigger.vue2.mjs';
 import { _ as _sfc_main$b } from './RangeCalendar.vue2.mjs';
@@ -21,6 +21,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

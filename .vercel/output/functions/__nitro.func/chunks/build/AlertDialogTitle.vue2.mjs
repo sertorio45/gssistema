@@ -1,7 +1,7 @@
 import { defineComponent, unref, mergeProps, withCtx, renderSlot, computed, createVNode } from 'vue';
 import { ssrRenderComponent, ssrRenderSlot, ssrRenderAttrs } from 'vue/server-renderer';
 import { useForwardPropsEmits, AlertDialogRoot, AlertDialogAction, AlertDialogCancel, AlertDialogPortal, AlertDialogOverlay, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from 'radix-vue';
-import { d as cn, x as buttonVariants } from './server.mjs';
+import { d as cn, z as buttonVariants } from './server.mjs';
 
 const _sfc_main$7 = /* @__PURE__ */ defineComponent({
   __name: "AlertDialog",

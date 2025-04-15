@@ -1,7 +1,7 @@
 import { defineComponent, ref, computed, mergeProps, withCtx, unref, createVNode, createBlock, createCommentVNode, openBlock, toDisplayString, createTextVNode, Fragment, renderList, mergeModels, useModel, TransitionGroup, useSSRContext, watch, useId, isRef } from 'vue';
 import { ssrRenderComponent, ssrInterpolate, ssrRenderList, ssrRenderAttrs, ssrRenderClass } from 'vue/server-renderer';
 import { ConfigProvider, SplitterPanel } from 'radix-vue';
-import { d as cn, b as __nuxt_component_9, x as buttonVariants, a as _sfc_main$e, c as _sfc_main$f, q as _sfc_main$o, t as _sfc_main$p, _ as _sfc_main$r, E as _sfc_main$u, V as refDebounced, W as useMediaQuery } from './server.mjs';
+import { d as cn, b as __nuxt_component_9, z as buttonVariants, a as _sfc_main$e, c as _sfc_main$f, h as _sfc_main$o, j as _sfc_main$p, _ as _sfc_main$r, E as _sfc_main$u, V as refDebounced, W as useMediaQuery } from './server.mjs';
 import { format, addHours, addDays, nextSaturday, formatDistanceToNow } from 'date-fns';
 import { _ as _sfc_main$t } from './ScrollArea.vue2.mjs';
 import { _ as _export_sfc } from './_plugin-vue_export-helper.mjs';
@@ -29,6 +29,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

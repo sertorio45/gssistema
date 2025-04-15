@@ -1,7 +1,7 @@
 import { defineComponent, mergeProps, unref, withCtx, createTextVNode, toDisplayString, createVNode, useSSRContext } from 'vue';
 import { ssrRenderAttrs, ssrRenderList, ssrRenderComponent, ssrInterpolate, ssrRenderSlot } from 'vue/server-renderer';
 import { _ as _export_sfc } from './_plugin-vue_export-helper.mjs';
-import { y as useRoute, a as _sfc_main$2, d as cn, c as _sfc_main$3 } from './server.mjs';
+import { l as useRoute, a as _sfc_main$2, d as cn, c as _sfc_main$3 } from './server.mjs';
 import { _ as __nuxt_component_15 } from './nuxt-link.mjs';
 
 const _sfc_main$1 = /* @__PURE__ */ defineComponent({

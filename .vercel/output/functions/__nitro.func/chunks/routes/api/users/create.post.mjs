@@ -11,6 +11,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 
 const create_post = defineEventHandler(async (event) => {
   try {

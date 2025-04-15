@@ -1,4 +1,4 @@
-import { m as useToast, a as _sfc_main$1, b as __nuxt_component_9, o as _sfc_main$d, q as _sfc_main$e, s as _sfc_main$f, t as _sfc_main$g, v as _sfc_main$m, _ as _sfc_main$o } from './server.mjs';
+import { f as useToast, a as _sfc_main$1, b as __nuxt_component_9, g as _sfc_main$d, h as _sfc_main$e, i as _sfc_main$f, j as _sfc_main$g, k as _sfc_main$m, _ as _sfc_main$o } from './server.mjs';
 import { defineComponent, ref, mergeProps, withCtx, createVNode, createTextVNode, unref, toDisplayString, createBlock, createCommentVNode, openBlock, Fragment, renderList, useSSRContext } from 'vue';
 import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrInterpolate, ssrRenderClass } from 'vue/server-renderer';
 import { _ as _sfc_main$2, a as _sfc_main$3, b as _sfc_main$4, c as _sfc_main$6 } from './CardTitle.vue2.mjs';
@@ -24,6 +24,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

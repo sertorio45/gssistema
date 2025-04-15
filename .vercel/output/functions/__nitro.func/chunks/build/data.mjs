@@ -1,4 +1,4 @@
-import { A as serialize, B as fetchDefaults, z as useAsyncData, C as useRequestFetch, f as useNuxtApp } from './server.mjs';
+import { A as serialize, B as fetchDefaults, m as useAsyncData, C as useRequestFetch, n as useNuxtApp } from './server.mjs';
 import { computed, toValue, reactive } from 'vue';
 import { createHash } from 'node:crypto';
 

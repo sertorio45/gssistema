@@ -1,5 +1,5 @@
 import { _ as __nuxt_component_15 } from './nuxt-link.mjs';
-import { d as cn, a as _sfc_main$4, q as _sfc_main$9, s as _sfc_main$a, t as _sfc_main$b, b as __nuxt_component_9 } from './server.mjs';
+import { d as cn, a as _sfc_main$4, h as _sfc_main$9, i as _sfc_main$a, j as _sfc_main$b, b as __nuxt_component_9 } from './server.mjs';
 import { defineComponent, unref, mergeProps, withCtx, renderSlot, computed, createVNode, createTextVNode, useSSRContext } from 'vue';
 import { ssrRenderComponent, ssrRenderSlot, ssrRenderAttrs } from 'vue/server-renderer';
 import { _ as _export_sfc } from './_plugin-vue_export-helper.mjs';
@@ -17,6 +17,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

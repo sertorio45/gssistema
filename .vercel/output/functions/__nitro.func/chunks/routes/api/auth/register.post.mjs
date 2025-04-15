@@ -11,6 +11,7 @@ import 'node:crypto';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 
 const register_post = defineEventHandler(async (event) => {
   try {

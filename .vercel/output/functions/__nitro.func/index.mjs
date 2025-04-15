@@ -10,4 +10,5 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 //# sourceMappingURL=index.mjs.map

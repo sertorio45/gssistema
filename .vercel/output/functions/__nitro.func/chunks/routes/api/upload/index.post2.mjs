@@ -11,6 +11,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 
 const UPLOAD_DIR = join(process.cwd(), "public", "uploads");
 const index_post = defineEventHandler(async (event) => {

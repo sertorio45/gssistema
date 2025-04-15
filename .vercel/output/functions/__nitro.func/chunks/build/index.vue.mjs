@@ -2,7 +2,7 @@ import { defineComponent, mergeProps, unref, withCtx, createVNode, createBlock, 
 import { ssrRenderAttrs, ssrRenderComponent, ssrInterpolate, ssrRenderList, ssrRenderClass } from 'vue/server-renderer';
 import { s as statuses, u as useArticle } from './data.mjs';
 import { _ as _sfc_main$e } from './Checkbox.vue2.mjs';
-import { d as cn, a as _sfc_main$a, b as __nuxt_component_9, e as useRouter, c as _sfc_main$m, E as _sfc_main$n, F as valueUpdater, z as useAsyncData, o as _sfc_main$F } from './server.mjs';
+import { d as cn, a as _sfc_main$a, b as __nuxt_component_9, e as useRouter, c as _sfc_main$m, E as _sfc_main$n, F as valueUpdater, m as useAsyncData, g as _sfc_main$F } from './server.mjs';
 import { _ as _sfc_main$8, a as _sfc_main$9, b as _sfc_main$b, c as _sfc_main$c } from './DropdownMenuTrigger.vue2.mjs';
 import { _ as _sfc_main$d, a as _sfc_main$w } from './DropdownMenuSeparator.vue2.mjs';
 import { z } from 'zod';
@@ -27,6 +27,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

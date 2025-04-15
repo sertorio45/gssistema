@@ -10,6 +10,7 @@ import 'node:crypto';
 import 'jsonwebtoken';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 
 const prisma = new PrismaClient();
 const index_get = defineEventHandler(async (_event) => {

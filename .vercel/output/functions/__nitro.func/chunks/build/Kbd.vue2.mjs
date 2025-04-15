@@ -2,7 +2,7 @@ import { defineComponent, unref, mergeProps, withCtx, createVNode, renderSlot, c
 import { ssrRenderComponent, ssrRenderSlot, ssrRenderAttrs, ssrRenderVNode } from 'vue/server-renderer';
 import { useForwardPropsEmits, VisuallyHidden } from 'radix-vue';
 import { _ as _sfc_main$3, a as _sfc_main$4, b as _sfc_main$5 } from './DialogTitle.vue2.mjs';
-import { v as _sfc_main$6, d as cn } from './server.mjs';
+import { k as _sfc_main$6, d as cn } from './server.mjs';
 import { _ as _sfc_main$7 } from './CommandList.vue2.mjs';
 import { cva } from 'class-variance-authority';
 

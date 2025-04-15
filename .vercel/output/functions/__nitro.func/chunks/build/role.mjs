@@ -1,4 +1,4 @@
-import { Z as defineNuxtRouteMiddleware, u as useAuth, n as navigateTo } from './server.mjs';
+import { Z as defineNuxtRouteMiddleware, u as useAuth, t as navigateTo } from './server.mjs';
 import 'vue';
 import '../nitro/nitro.mjs';
 import 'node:http';
@@ -12,6 +12,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

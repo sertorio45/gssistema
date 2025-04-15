@@ -1,6 +1,6 @@
 import { _ as __nuxt_component_0 } from './Layout.vue.mjs';
 import { useForm, Field, FieldArray } from 'vee-validate';
-import { u as useAuth, Y as toast, c as _sfc_main$2, o as _sfc_main$3, d as cn, b as __nuxt_component_9, a as _sfc_main$b } from './server.mjs';
+import { u as useAuth, Y as toast, c as _sfc_main$2, g as _sfc_main$3, d as cn, b as __nuxt_component_9, a as _sfc_main$b } from './server.mjs';
 import { defineComponent, ref, mergeProps, withCtx, createTextVNode, createVNode, createBlock, createCommentVNode, openBlock, unref, Fragment, renderList, toDisplayString, useSSRContext } from 'vue';
 import { ssrRenderAttrs, ssrRenderComponent, ssrRenderClass, ssrRenderList, ssrIncludeBooleanAttr, ssrInterpolate } from 'vue/server-renderer';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -22,6 +22,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

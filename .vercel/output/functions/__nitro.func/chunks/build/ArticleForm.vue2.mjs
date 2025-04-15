@@ -1,5 +1,5 @@
 import { useForm, Field } from 'vee-validate';
-import { D as useColorMode, o as _sfc_main$8, a as _sfc_main$j, b as __nuxt_component_9 } from './server.mjs';
+import { D as useColorMode, g as _sfc_main$8, a as _sfc_main$j, b as __nuxt_component_9 } from './server.mjs';
 import { defineComponent, ref, computed, watch, unref, mergeProps, withCtx, createTextVNode, toDisplayString, createVNode, createBlock, createCommentVNode, openBlock, Fragment, renderList } from 'vue';
 import { ssrRenderComponent, ssrInterpolate, ssrRenderAttrs, ssrRenderList } from 'vue/server-renderer';
 import { toTypedSchema } from '@vee-validate/zod';

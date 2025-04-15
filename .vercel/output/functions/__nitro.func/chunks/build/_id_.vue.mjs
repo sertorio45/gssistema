@@ -1,4 +1,4 @@
-import { y as useRoute, e as useRouter, z as useAsyncData, a as _sfc_main$1, b as __nuxt_component_9, o as _sfc_main$2 } from './server.mjs';
+import { l as useRoute, e as useRouter, m as useAsyncData, a as _sfc_main$1, b as __nuxt_component_9, g as _sfc_main$2 } from './server.mjs';
 import { defineComponent, withAsyncContext, computed, mergeProps, unref, withCtx, createVNode, createTextVNode, toDisplayString, createBlock, createCommentVNode, openBlock, useSSRContext } from 'vue';
 import { ssrRenderAttrs, ssrRenderComponent, ssrInterpolate, ssrRenderClass } from 'vue/server-renderer';
 import { u as useArticle, s as statuses } from './data.mjs';
@@ -17,6 +17,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';

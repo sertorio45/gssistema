@@ -1,5 +1,5 @@
 import { _ as __nuxt_component_15 } from './nuxt-link.mjs';
-import { d as cn, m as useToast, J as useClipboard, a as _sfc_main$4, v as _sfc_main$d, _ as _sfc_main$e, b as __nuxt_component_9 } from './server.mjs';
+import { d as cn, f as useToast, J as useClipboard, a as _sfc_main$4, k as _sfc_main$d, _ as _sfc_main$e, b as __nuxt_component_9 } from './server.mjs';
 import { defineComponent, unref, mergeProps, withCtx, renderSlot, computed, createVNode, ref, createTextVNode, useSSRContext } from 'vue';
 import { ssrRenderComponent, ssrRenderSlot, ssrRenderAttrs } from 'vue/server-renderer';
 import { _ as _sfc_main$5, a as _sfc_main$6, b as _sfc_main$7, c as _sfc_main$8 } from './CardTitle.vue2.mjs';
@@ -21,6 +21,7 @@ import 'jsonwebtoken';
 import '@prisma/client';
 import '@iconify/utils';
 import 'consola';
+import 'node:module';
 import 'vue-router';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';
