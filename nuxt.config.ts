@@ -10,9 +10,6 @@ export default defineNuxtConfig({
       ],
     },
   },
-  nitro: {
-    preset: 'vercel'
-  },
 
   modules: [
     '@unocss/nuxt',
