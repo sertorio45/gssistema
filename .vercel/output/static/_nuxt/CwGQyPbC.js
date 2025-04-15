@@ -1,1 +1,0 @@
-import{e1 as s,j as u,aZ as r}from"./xwqOR6O6.js";const a=s(i=>{const{user:t,isAuthenticated:o}=u(),e=i.meta.requiredRoles;if(!(!e||e.length===0)){if(!o)return r("/login");if(!t||!e.includes(t.role))return r("/403")}});export{a as default};

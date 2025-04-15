@@ -1,1 +1,0 @@
-import{d as l,J as r,g as n,o as p,w as u,p as d,G as f,u as o,m,cf as _}from"./xwqOR6O6.js";const g=l({__name:"SelectGroup",props:{asChild:{type:Boolean},as:{},class:{}},setup(t){const s=t,c=r(()=>{const{class:e,...a}=s;return a});return(e,a)=>(p(),n(o(_),f({class:o(m)("p-1 w-full",s.class)},c.value),{default:u(()=>[d(e.$slots,"default")]),_:3},16,["class"]))}});export{g as _};
